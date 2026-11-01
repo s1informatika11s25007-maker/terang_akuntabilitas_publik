@@ -1,13 +1,57 @@
-# 💡 Terang-akuntablitas_publik
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,11,124,138,15,163,177&height=220&section=header&text=TERANG%20AKUNTABILITAS%20PUBLIK&fontSize=36&fontColor=ffffff&animation=twinkling&fontAlignY=36&desc=%E2%9A%A1%20Platform%20Transparansi%20APBD%20Sumut%20%26%20Pengawasan%20Proyek%20Berbasis%20AI%20Otonom&descAlignY=62&descSize=16" width="100%" alt="3D Animated Banner Header" />
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite-5.4.1-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Google Gemini AI](https://img.shields.io/badge/Google_Gemini-AI_Inside-8E75B2?logo=google&logoColor=white)](https://ai.google.dev/)
+  <br />
 
-> **TERANG (Transparansi & Evaluasi Realisasi Anggaran Negara)** adalah platform digital pengawasan akuntabilitas publik dan transparansi APBD Sumatera Utara berbasis AI otonom, pemetaan GIS interaktif, dan moderasi aduan warga secara real-time. Platform ini memungkinkan publik dan instansi pemerintah memantau deviasi fisik vs keuangan proyek APBD di 33 Kabupaten/Kota secara presisi dan akuntabel.
+  <a href="https://github.com/s1informatika11s25007-maker/terang_akuntabilitas_publik">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=20&pause=1000&color=0FA3B1&center=true&vCenter=true&width=650&lines=%F0%9F%92%A1+Transparansi+APBD+33+Kabupaten%2FKota+Sumut;%F0%9F%A4%96+SuperAgent+AI+Pengawasan+Otonom+1-Klik;%F0%9F%97%BA%EF%B8%8F+Pemetaan+GIS+Interaktif+Proyek+Publik;%F0%9F%9D%A1%EF%B8%8F+Moderasi+Aduan+Faktual+%26+Timeline+Publik;%F0%9F%93%88+Analisis+Prediktif+Deviasi+Fisik+vs+Keuangan" alt="Typing SVG" />
+  </a>
+
+  <br />
+
+  [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge&logo=apache)](https://opensource.org/licenses/Apache-2.0)
+  [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  [![Vite](https://img.shields.io/badge/Vite-5.4.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+  [![Google Gemini AI](https://img.shields.io/badge/Google_Gemini-AI_Inside-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+</div>
+
+---
+
+> **💡 TERANG (Transparansi & Evaluasi Realisasi Anggaran Negara)** adalah platform digital pengawasan akuntabilitas publik dan transparansi APBD Sumatera Utara berbasis AI otonom, pemetaan GIS interaktif, dan moderasi aduan warga secara real-time. Platform ini memungkinkan publik dan instansi pemerintah memantau deviasi fisik vs keuangan proyek APBD di 33 Kabupaten/Kota secara presisi dan akuntabel.
+
+---
+
+## 🏗️ Diagram Alur Kerja & Arsitektur Sistem 3D
+
+```mermaid
+graph TD
+  subgraph PUBLIC_INPUT["🌐 Input Publik & Sensor Real-Time"]
+    A["📝 Aduan Warga Faktual"] -->|Auto GPS & Evidence| B["⚡ API Gateway Server"]
+    C["🛰️ BMKG & Open-Meteo API"] -->|Cuaca & Bencana| B
+    D["📊 Data APBD & CSV Proyek"] -->|Import APBD| B
+  end
+
+  subgraph AI_ENGINE["🤖 SuperAgent AI Otonom Engine"]
+    B --> E["🎯 Auto-Triage Urgensi 1-5"]
+    E --> F["🧠 Gemini AI Analysis & Risk Score"]
+    F --> G["📄 Auto-Dispatch Nota Dinas"]
+  end
+
+  subgraph RBAC_PANEL["🛡️ Panel Moderasi & Visualisasi"]
+    G --> H["🛡️ Inspektorat (Verifikasi)"]
+    G --> I["🏛️ Dinas PUPR (Tanggapan Resmi)"]
+    F --> J["🗺️ Dashboard GIS Interaktif & Skor Transparansi"]
+  end
+
+  classDef ai fill:#0B7C8A,stroke:#0FA3B1,stroke-width:2px,color:#fff;
+  classDef public fill:#10B981,stroke:#059669,stroke-width:2px,color:#fff;
+  classDef rbac fill:#6366F1,stroke:#4F46E5,stroke-width:2px,color:#fff;
+  class E,F,G ai;
+  class A,C,D public;
+  class H,I,J rbac;
+```
 
 ---
 
@@ -15,7 +59,7 @@
 
 Aplikasi TERANG telah dilengkapi dengan fitur-fitur utama yang siap digunakan secara penuh (*fully functional*):
 
-| Modul / Halaman | Status Progress | Deskripsi & Kapabilitas |
+| Modul / Halaman | Status Progress | Deskripsi & Kapabilitas Utama |
 | :--- | :---: | :--- |
 | **🏠 Beranda (Landing View)** | `100% Selesai` | Banner visual interaktif, KPI statistik APBD real-time, ringkasan proyek deviasi tinggi, dan peta skor transparansi daerah. |
 | **🗺️ Dashboard Transparansi & GIS** | `100% Selesai` | Peta Leaflet interaktif 33 Kab/Kota Sumut, skor transparansi wilayah, visualisasi serapan anggaran, dan filter sektoral. |
@@ -89,6 +133,9 @@ Gunakan akun demo berikut untuk menguji fitur moderasi berbasis peran (*Role-Bas
 ---
 
 ## 📁 Struktur Folder Proyek (100% Presisi)
+
+<details>
+<summary>📂 <strong>Klik di sini untuk melihat struktur pohon folder lengkap</strong></summary>
 
 ```text
 terang_akuntabilitas_publik/
@@ -164,6 +211,7 @@ terang_akuntabilitas_publik/
         ├── ReportFormView.tsx   # Formulir pengaduan warga faktual
         └── TrackReportView.tsx  # Pelacakan status aduan real-time
 ```
+</details>
 
 ---
 
@@ -178,6 +226,8 @@ Proyek ini dilengkapi **SuperAgent AI**, sebuah agen pengawasan otonom yang dapa
 
 ---
 
-## 📄 Lisensi & Hak Cipta
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,11,124,138,15,163,177&height=100&section=footer" width="100%" alt="3D Waving Footer" />
 
-Diterbitkan di bawah lisensi **[Apache License 2.0](LICENSE)**. Hak Cipta © 2026 Tim TERANG Akuntabilitas Publik Sumatera Utara.
+  <p>Diterbitkan di bawah lisensi <strong>Apache License 2.0</strong>. Hak Cipta © 2026 Tim TERANG Akuntabilitas Publik Sumatera Utara.</p>
+</div>
