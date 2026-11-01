@@ -1,0 +1,6 @@
+{
+  "name": "TERANG - Transparansi & Akuntabilitas Publik",
+  "description": "Platform transparansi data APBD & realisasi proyek publik Sumatera Utara dengan pelaporan warga dan indikator kesenjangan cerdas untuk WIA 2026.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
