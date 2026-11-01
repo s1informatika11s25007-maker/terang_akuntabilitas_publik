@@ -1,4 +1,8 @@
 <div align="center">
+  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="380" alt="3D Anime Coding Developer Animation" />
+
+  <br />
+
   <h1>💡 Terang-akuntablitas_publik</h1>
   <p><strong>TERANG — Transparansi & Evaluasi Realisasi Anggaran Negara</strong></p>
 
@@ -15,6 +19,10 @@
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
   [![Vite](https://img.shields.io/badge/Vite-5.4.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
   [![Google Gemini AI](https://img.shields.io/badge/Google_Gemini-AI_Inside-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+
+  <br />
+
+  <img src="https://raw.githubusercontent.com/andrelugmes/andrelugmes/master/assets/line.gif" width="100%" alt="Animated Line Divider" />
 </div>
 
 ---
@@ -227,5 +235,7 @@ Proyek ini dilengkapi **SuperAgent AI**, sebuah agen pengawasan otonom yang dapa
 ---
 
 <div align="center">
+  <img src="https://raw.githubusercontent.com/andrelugmes/andrelugmes/master/assets/line.gif" width="100%" alt="Animated Line Divider" />
+
   <p>Diterbitkan di bawah lisensi <strong>Apache License 2.0</strong>. Hak Cipta © 2026 Tim TERANG Akuntabilitas Publik Sumatera Utara.</p>
 </div>
