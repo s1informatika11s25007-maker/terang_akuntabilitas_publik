@@ -1,12 +1,12 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,11,124,138,15,163,177&height=220&section=header&text=TERANG%20AKUNTABILITAS%20PUBLIK&fontSize=36&fontColor=ffffff&animation=twinkling&fontAlignY=36&desc=%E2%9A%A1%20Platform%20Transparansi%20APBD%20Sumut%20%26%20Pengawasan%20Proyek%20Berbasis%20AI%20Otonom&descAlignY=62&descSize=16" width="100%" alt="3D Animated Banner Header" />
-
-  <br />
+  <h1>💡 Terang-akuntablitas_publik</h1>
+  <p><strong>TERANG — Transparansi & Evaluasi Realisasi Anggaran Negara</strong></p>
 
   <a href="https://github.com/s1informatika11s25007-maker/terang_akuntabilitas_publik">
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=20&pause=1000&color=0FA3B1&center=true&vCenter=true&width=650&lines=%F0%9F%92%A1+Transparansi+APBD+33+Kabupaten%2FKota+Sumut;%F0%9F%A4%96+SuperAgent+AI+Pengawasan+Otonom+1-Klik;%F0%9F%97%BA%EF%B8%8F+Pemetaan+GIS+Interaktif+Proyek+Publik;%F0%9F%9D%A1%EF%B8%8F+Moderasi+Aduan+Faktual+%26+Timeline+Publik;%F0%9F%93%88+Analisis+Prediktif+Deviasi+Fisik+vs+Keuangan" alt="Typing SVG" />
   </a>
 
+  <br />
   <br />
 
   [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge&logo=apache)](https://opensource.org/licenses/Apache-2.0)
@@ -23,7 +23,7 @@
 
 ---
 
-## 🏗️ Diagram Alur Kerja & Arsitektur Sistem 3D
+## 🏗️ Diagram Alur Kerja & Arsitektur Sistem
 
 ```mermaid
 graph TD
@@ -227,7 +227,5 @@ Proyek ini dilengkapi **SuperAgent AI**, sebuah agen pengawasan otonom yang dapa
 ---
 
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=0,11,124,138,15,163,177&height=100&section=footer" width="100%" alt="3D Waving Footer" />
-
   <p>Diterbitkan di bawah lisensi <strong>Apache License 2.0</strong>. Hak Cipta © 2026 Tim TERANG Akuntabilitas Publik Sumatera Utara.</p>
 </div>
