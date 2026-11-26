@@ -199,12 +199,12 @@ export const LandingView: React.FC<LandingViewProps> = ({
     : currentMotion.exit;
 
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden bg-slate-950 text-slate-100 font-sans select-none">
-      {/* Background Ambient Glow Effects */}
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F8FAFC] text-slate-800 font-sans select-none">
+      {/* Background Subtle Ambient Glows (Light Theme) */}
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-[#0FA3B1]/20 blur-3xl" />
-        <div className="absolute -right-32 top-1/3 h-96 w-96 rounded-full bg-teal-500/15 blur-3xl" />
-        <div className="absolute -bottom-40 left-1/3 h-[500px] w-[500px] rounded-full bg-slate-800/40 blur-3xl" />
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-teal-100/60 blur-3xl" />
+        <div className="absolute -right-32 top-1/3 h-96 w-96 rounded-full bg-sky-100/60 blur-3xl" />
+        <div className="absolute -bottom-40 left-1/3 h-[500px] w-[500px] rounded-full bg-slate-200/40 blur-3xl" />
       </div>
 
       {/* Slide Presentation Container */}
@@ -227,63 +227,63 @@ export const LandingView: React.FC<LandingViewProps> = ({
             className="w-full h-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-16"
           >
             {/* ============================================================ */}
-            {/* SLIDE 0: HERO & WELCOME */}
+            {/* SLIDE 0: HERO & WELCOME (LIGHT THEME) */}
             {/* ============================================================ */}
             {activeSlide === 0 && (
               <div className="max-w-6xl w-full grid lg:grid-cols-12 gap-8 items-center">
                 <div className="lg:col-span-7 space-y-5 text-left">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-300 border border-teal-500/30">
-                    <span className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200/80 shadow-2xs">
+                    <span className="w-2 h-2 rounded-full bg-[#0FA3B1] animate-ping" />
                     PLATFORM AKUNTABILITAS · SUMATERA UTARA
                   </div>
-                  <h1 className="text-4xl sm:text-6xl font-extrabold font-display leading-tight text-white">
+                  <h1 className="text-4xl sm:text-6xl font-extrabold font-display leading-tight text-slate-900">
                     Anggaran publik.
                     <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] via-teal-300 to-amber-300">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] to-teal-700">
                       Diawasi satu klik.
                     </span>
                   </h1>
-                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl">
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl">
                     Platform terpadu memantau APBD 33 kabupaten/kota, mendeteksi proyek tertinggal dengan konteks cuaca dan gempa nyata, serta memproses laporan warga secara otomatis dengan moderasi RBAC.
                   </p>
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
                       onClick={runAgent}
-                      className="px-6 py-3.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-teal-900/40 transition-all hover:scale-105 cursor-pointer"
+                      className="px-6 py-3.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-teal-900/20 transition-all hover:scale-105 cursor-pointer"
                     >
                       Jalankan Agen Otonom <ArrowRight className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onNavigate("dashboard")}
-                      className="px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold rounded-xl text-sm flex items-center gap-2 border border-slate-700 transition-all hover:scale-105 cursor-pointer"
+                      className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-xl text-sm flex items-center gap-2 border border-slate-300 shadow-sm transition-all hover:scale-105 cursor-pointer"
                     >
                       Jelajahi Data <FileCheck2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-4 text-xs text-slate-400">
-                    <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5 text-teal-400" /> Data APBD 33 Kab/Kota</span>
-                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Privasi Pelapor Terjamin</span>
-                    <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400" /> Sensor Cuaca BMKG &amp; Gempa USGS</span>
+                  <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                    <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5 text-[#0B7C8A]" /> Data APBD 33 Kab/Kota</span>
+                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Privasi Pelapor Terjamin</span>
+                    <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-sky-600" /> Sensor Cuaca BMKG &amp; Gempa USGS</span>
                   </div>
                 </div>
 
                 <div className="lg:col-span-5 relative">
-                  <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
+                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-xl group bg-white">
                     <img
                       src="/terang_hero_banner_1792932754839.jpg"
                       alt="Kawasan pemerintahan Sumatera Utara"
                       className="w-full h-auto object-cover max-h-80 transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-                    <div className="absolute bottom-4 left-4 text-[11px] font-bold text-slate-300 tracking-wider font-mono">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-[11px] font-bold text-white tracking-wider font-mono">
                       PANTAU · PAHAMI · OTONOM
                     </div>
                     {/* Floating stats */}
-                    <div className="absolute top-4 right-4 bg-slate-900/90 border border-slate-700 backdrop-blur-md p-2.5 rounded-xl text-white text-xs flex items-center gap-2 shadow-xl">
-                      <TrendingUp className="w-4 h-4 text-teal-400" />
+                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md border border-slate-200 p-2.5 rounded-xl text-slate-900 text-xs flex items-center gap-2 shadow-lg">
+                      <TrendingUp className="w-4 h-4 text-[#0FA3B1]" />
                       <div>
-                        <small className="block text-[9px] text-slate-400">Serapan APBD</small>
-                        <strong className="text-xs font-mono font-bold text-teal-300">{kpis.avgSerapan}%</strong>
+                        <small className="block text-[9px] text-slate-500">Serapan APBD</small>
+                        <strong className="text-xs font-mono font-bold text-[#0B7C8A]">{kpis.avgSerapan}%</strong>
                       </div>
                     </div>
                   </div>
@@ -292,55 +292,55 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 1: MENGAPA TERANG (3D Y-Axis Flip Card Rotation) */}
+            {/* SLIDE 1: MENGAPA TERANG (3D Y-Axis Flip Card Rotation - LIGHT) */}
             {/* ============================================================ */}
             {activeSlide === 1 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
                     TANTANGAN &amp; SOLUSI DIGITAL
                   </span>
-                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white">
+                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900">
                     Mengapa TERANG Dibutuhkan?
                   </h2>
-                  <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
+                  <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
                     Mengatasi deviasi pembangunan fisik vs keuangan melalui pemetaan berbasis data saintifik dan sistem otonom.
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 text-left">
-                  <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-4 hover:border-slate-700 transition-all">
-                    <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold">
+                  <div className="bg-white border border-amber-200/80 p-6 rounded-2xl space-y-4 shadow-sm hover:shadow-md transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700 font-bold">
                       ⚠️
                     </div>
-                    <h3 className="text-xl font-bold text-white font-display">Tantangan Pengawasan Klasik</h3>
-                    <ul className="space-y-2 text-xs text-slate-300">
+                    <h3 className="text-xl font-bold text-slate-900 font-display">Tantangan Pengawasan Klasik</h3>
+                    <ul className="space-y-2.5 text-xs text-slate-600">
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-400 font-bold">•</span> Keterlambatan proyek fisik di wilayah terpencil 33 Kabupaten/Kota.
+                        <span className="text-amber-500 font-bold">•</span> Keterlambatan proyek fisik di wilayah terpencil 33 Kabupaten/Kota.
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-400 font-bold">•</span> Sulit mendeteksi dampak faktor eksternal (curah hujan tinggi BMKG / gempa bumi USGS).
+                        <span className="text-amber-500 font-bold">•</span> Sulit mendeteksi dampak faktor eksternal (curah hujan tinggi BMKG / gempa bumi USGS).
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-400 font-bold">•</span> Laporan aduan warga menumpuk tanpa sistem triase otomatis yang adil.
+                        <span className="text-amber-500 font-bold">•</span> Laporan aduan warga menumpuk tanpa sistem triase otomatis yang adil.
                       </li>
                     </ul>
                   </div>
 
-                  <div className="bg-gradient-to-br from-teal-950/60 to-slate-900 border border-teal-500/40 p-6 rounded-2xl space-y-4 hover:border-teal-400 transition-all">
-                    <div className="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 font-bold">
-                      <ShieldCheck className="w-6 h-6 text-teal-300" />
+                  <div className="bg-gradient-to-br from-teal-50/80 to-white border border-teal-200 p-6 rounded-2xl space-y-4 shadow-md hover:shadow-lg transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-teal-100 border border-teal-200 flex items-center justify-center text-[#0B7C8A] font-bold">
+                      <ShieldCheck className="w-6 h-6 text-[#0B7C8A]" />
                     </div>
-                    <h3 className="text-xl font-bold text-white font-display">Solusi Otonom TERANG</h3>
-                    <ul className="space-y-2 text-xs text-teal-100">
+                    <h3 className="text-xl font-bold text-slate-900 font-display">Solusi Otonom TERANG</h3>
+                    <ul className="space-y-2.5 text-xs text-slate-700">
                       <li className="flex items-start gap-2">
-                        <span className="text-teal-400 font-bold">•</span> <strong className="text-white font-bold">SuperAgent Otonom 1-Klik</strong>: Memindai deviasi &amp; membuat rekomendasi.
+                        <span className="text-[#0FA3B1] font-bold">•</span> <strong className="text-slate-900 font-bold">SuperAgent Otonom 1-Klik</strong>: Memindai deviasi &amp; membuat rekomendasi.
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-teal-400 font-bold">•</span> <strong className="text-white font-bold">Integrasi Sensor BMKG &amp; USGS</strong>: Analisis konteks bencana &amp; cuaca otomatis.
+                        <span className="text-[#0FA3B1] font-bold">•</span> <strong className="text-slate-900 font-bold">Integrasi Sensor BMKG &amp; USGS</strong>: Analisis konteks bencana &amp; cuaca otomatis.
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-teal-400 font-bold">•</span> <strong className="text-white font-bold">Kompresi Foto Bukti &amp; State Machine</strong>: Pelaporan warga aman &amp; terstruktur.
+                        <span className="text-[#0FA3B1] font-bold">•</span> <strong className="text-slate-900 font-bold">Kompresi Foto Bukti &amp; State Machine</strong>: Pelaporan warga aman &amp; terstruktur.
                       </li>
                     </ul>
                   </div>
@@ -349,15 +349,15 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 2: FITUR UTAMA PENGAWASAN (Radial Circle Expansion) */}
+            {/* SLIDE 2: FITUR UTAMA PENGAWASAN (Circle Expansion - LIGHT) */}
             {/* ============================================================ */}
             {activeSlide === 2 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-300 border border-teal-500/30">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
                     EKOSISTEM TERPADU
                   </span>
-                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white">
+                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900">
                     4 Pilar Fitur Pengawasan TERANG
                   </h2>
                 </div>
@@ -391,16 +391,16 @@ export const LandingView: React.FC<LandingViewProps> = ({
                   ].map((f, i) => (
                     <div
                       key={i}
-                      className="bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 p-5 rounded-2xl space-y-3 transition-all hover:-translate-y-1"
+                      className="bg-white border border-slate-200 hover:border-teal-400 p-5 rounded-2xl space-y-3 shadow-xs hover:shadow-md transition-all hover:-translate-y-1"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-300 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#0B7C8A] flex items-center justify-center">
                         <f.icon className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-mono text-teal-400 uppercase tracking-wider block">
+                      <span className="text-[10px] font-mono text-[#0FA3B1] uppercase tracking-wider block font-semibold">
                         {f.tag}
                       </span>
-                      <h3 className="text-base font-bold text-white font-display">{f.title}</h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
+                      <h3 className="text-base font-bold text-slate-900 font-display">{f.title}</h3>
+                      <p className="text-xs text-slate-600 leading-relaxed">{f.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -408,49 +408,49 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 3: ARSITEKTUR & ALUR KERJA OTONOM (3D Door Opening) */}
+            {/* SLIDE 3: ARSITEKTUR & ALUR KERJA OTONOM (3D Door Opening - LIGHT) */}
             {/* ============================================================ */}
             {activeSlide === 3 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200">
                     DIAGRAM ALUR KERJA
                   </span>
-                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white">
+                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900">
                     Arsitektur Otonom TERANG
                   </h2>
-                  <p className="text-slate-400 text-sm max-w-xl mx-auto">
+                  <p className="text-slate-600 text-sm max-w-xl mx-auto">
                     Transformasi data masukan publik dan sensor real-time menjadi keputusan otomatis yang dapat dipertanggungjawabkan.
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
-                  <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
-                    <span className="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center text-xs font-bold font-mono">
+                  <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-xs">
+                    <span className="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center text-xs font-bold font-mono">
                       01
                     </span>
-                    <h3 className="text-base font-bold text-white font-display">Input Publik &amp; Sensor</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <h3 className="text-base font-bold text-slate-900 font-display">Input Publik &amp; Sensor</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       Aduan warga dengan koordinat GPS, data APBD CSV, serta sensor BMKG &amp; USGS secara berkala.
                     </p>
                   </div>
 
-                  <div className="bg-slate-900 border border-teal-500/40 p-5 rounded-2xl space-y-3 relative">
-                    <span className="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center text-xs font-bold font-mono">
+                  <div className="bg-teal-50/50 border border-teal-300 p-5 rounded-2xl space-y-3 shadow-md relative">
+                    <span className="w-8 h-8 rounded-lg bg-[#0B7C8A] text-white flex items-center justify-center text-xs font-bold font-mono">
                       02
                     </span>
-                    <h3 className="text-base font-bold text-white font-display">Engine SuperAgent Otonom</h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <h3 className="text-base font-bold text-slate-900 font-display">Engine SuperAgent Otonom</h3>
+                    <p className="text-xs text-slate-700 leading-relaxed">
                       Evaluasi triase urgensi 1-5, pencocokan skor risiko deviasi, dan draf otomatis Nota Dinas rekomendasi.
                     </p>
                   </div>
 
-                  <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
-                    <span className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-xs font-bold font-mono">
+                  <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-xs">
+                    <span className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold font-mono">
                       03
                     </span>
-                    <h3 className="text-base font-bold text-white font-display">Panel RBAC &amp; Dispatch</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <h3 className="text-base font-bold text-slate-900 font-display">Panel RBAC &amp; Dispatch</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       Verifikasi lanjutan oleh petugas inspektorat / instansi dinas terkait sebelum penerbitan resmi.
                     </p>
                   </div>
@@ -459,47 +459,47 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 4: STATISTIK KINERJA (3D Z-Tilt Blur Rise) */}
+            {/* SLIDE 4: STATISTIK KINERJA (3D Z-Tilt Blur Rise - LIGHT) */}
             {/* ============================================================ */}
             {activeSlide === 4 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                     REAL-TIME METRICS
                   </span>
-                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white">
+                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900">
                     Statistik Pengawasan Terpadu
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                  <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-2">
-                    <span className="text-xs text-slate-400 font-medium">Total Pagu APBD</span>
-                    <div className="text-3xl font-extrabold font-mono text-white">
+                  <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-2 shadow-xs hover:shadow-md transition-shadow">
+                    <span className="text-xs text-slate-500 font-medium">Total Pagu APBD</span>
+                    <div className="text-3xl font-extrabold font-mono text-slate-900">
                       Rp {(kpis.totalPagu / 1e12).toFixed(1)} T
                     </div>
-                    <span className="text-[11px] text-teal-400 font-medium block">TA 2024</span>
+                    <span className="text-[11px] text-[#0B7C8A] font-medium block">TA 2024</span>
                   </div>
 
-                  <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-2">
-                    <span className="text-xs text-slate-400 font-medium">Rata-rata Serapan</span>
+                  <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-2 shadow-xs hover:shadow-md transition-shadow">
+                    <span className="text-xs text-slate-500 font-medium">Rata-rata Serapan</span>
                     <div className="text-3xl font-extrabold font-mono text-[#0FA3B1]">
                       {kpis.avgSerapan}%
                     </div>
                     <span className="text-[11px] text-slate-400 block">Target: 85%</span>
                   </div>
 
-                  <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-2">
-                    <span className="text-xs text-slate-400 font-medium">Paket Proyek</span>
-                    <div className="text-3xl font-extrabold font-mono text-white">
+                  <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-2 shadow-xs hover:shadow-md transition-shadow">
+                    <span className="text-xs text-slate-500 font-medium">Paket Proyek</span>
+                    <div className="text-3xl font-extrabold font-mono text-slate-900">
                       {kpis.totalProjects}+
                     </div>
                     <span className="text-[11px] text-slate-400 block">9 Sektor Belanja</span>
                   </div>
 
-                  <div className="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-2">
-                    <span className="text-xs text-slate-400 font-medium">Laporan Selesai</span>
-                    <div className="text-3xl font-extrabold font-mono text-emerald-400">
+                  <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-2 shadow-xs hover:shadow-md transition-shadow">
+                    <span className="text-xs text-slate-500 font-medium">Laporan Selesai</span>
+                    <div className="text-3xl font-extrabold font-mono text-emerald-600">
                       {kpis.completedReports} / {kpis.totalReports}
                     </div>
                     <span className="text-[11px] text-slate-400 block">Otomasi 100%</span>
@@ -509,18 +509,18 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 5: MULAI & AKSES APLIKASI (Inset Rounded Rect Reveal) */}
+            {/* SLIDE 5: MULAI & AKSES APLIKASI (Inset Rounded Rect Reveal - LIGHT) */}
             {/* ============================================================ */}
             {activeSlide === 5 && (
               <div className="max-w-4xl w-full space-y-8 text-center">
                 <div className="space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0FA3B1] to-teal-600 flex items-center justify-center text-white font-extrabold text-2xl font-display mx-auto shadow-xl shadow-teal-900/40">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0FA3B1] to-teal-700 flex items-center justify-center text-white font-extrabold text-2xl font-display mx-auto shadow-xl shadow-teal-900/20">
                     T
                   </div>
-                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white">
+                  <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-slate-900">
                     Siap Memulai Pengawasan?
                   </h2>
-                  <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto">
+                  <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto">
                     Akses dashboard transparansi APBD, jalankan pemindaian agen otonom, atau laporkan temuan fisik proyek publik di sekitarmu.
                   </p>
                 </div>
@@ -528,21 +528,21 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 <div className="flex flex-wrap items-center justify-center gap-4">
                   <button
                     onClick={runAgent}
-                    className="px-8 py-4 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-xl shadow-teal-950/60 transition-all hover:scale-105 cursor-pointer"
+                    className="px-8 py-4 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-xl shadow-teal-900/20 transition-all hover:scale-105 cursor-pointer"
                   >
-                    <Activity className="w-4 h-4 text-teal-300" /> Jalankan Agen Otonom
+                    <Activity className="w-4 h-4 text-teal-200" /> Jalankan Agen Otonom
                   </button>
 
                   <button
                     onClick={() => onNavigate("dashboard")}
-                    className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl text-sm flex items-center gap-2 border border-slate-700 transition-all hover:scale-105 cursor-pointer"
+                    className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-2xl text-sm flex items-center gap-2 border border-slate-300 shadow-sm transition-all hover:scale-105 cursor-pointer"
                   >
                     Buka Dashboard <ArrowRight className="w-4 h-4" />
                   </button>
 
                   <button
                     onClick={() => onNavigate("lapor")}
-                    className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-2xl text-sm flex items-center gap-2 border border-slate-700 transition-all hover:scale-105 cursor-pointer"
+                    className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-md transition-all hover:scale-105 cursor-pointer"
                   >
                     Buat Laporan Warga
                   </button>
@@ -556,20 +556,20 @@ export const LandingView: React.FC<LandingViewProps> = ({
         {activeSlide < totalSlides - 1 && (
           <button
             onClick={() => goToSlide(activeSlide + 1)}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-slate-400 hover:text-white transition-colors cursor-pointer group"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-slate-500 hover:text-slate-900 transition-colors cursor-pointer group"
           >
-            <span className="text-[10px] font-mono tracking-widest uppercase mb-1">
+            <span className="text-[10px] font-mono tracking-widest uppercase mb-1 font-semibold">
               SCROLL / LANJUT
             </span>
-            <ChevronDown className="w-5 h-5 animate-bounce text-teal-400 group-hover:scale-125 transition-transform" />
+            <ChevronDown className="w-5 h-5 animate-bounce text-[#0FA3B1] group-hover:scale-125 transition-transform" />
           </button>
         )}
       </div>
 
-      {/* Slide Chapter Dot Indicator (Right Side) */}
+      {/* Slide Chapter Dot Indicator (Right Side - Light Theme) */}
       <nav
         aria-label="Navigasi Slide Presentasi"
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-3 bg-slate-900/80 backdrop-blur-md p-2.5 rounded-full border border-slate-800 shadow-xl"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-3 bg-white/90 backdrop-blur-md p-2.5 rounded-full border border-slate-200 shadow-lg"
       >
         {SLIDE_LABELS.map((label, index) => (
           <button
@@ -579,8 +579,8 @@ export const LandingView: React.FC<LandingViewProps> = ({
             title={label}
             className={`rounded-full transition-all duration-300 focus:outline-none ${
               activeSlide === index
-                ? "h-8 w-2.5 bg-teal-400 shadow-md shadow-teal-500/50"
-                : "h-2.5 w-2.5 bg-slate-700 hover:bg-slate-400"
+                ? "h-8 w-2.5 bg-[#0FA3B1] shadow-md shadow-teal-500/30"
+                : "h-2.5 w-2.5 bg-slate-300 hover:bg-slate-500"
             }`}
           />
         ))}
