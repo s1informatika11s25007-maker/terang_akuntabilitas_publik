@@ -202,6 +202,13 @@ export default function App() {
             onOpenAuth={() => {
               /* Auth handled natively on Slide 6 */
             }}
+            onLoginSuccess={(user, token) => {
+              localStorage.setItem('terang_user', JSON.stringify(user));
+              localStorage.setItem('terang_token', token);
+              setAuthToken(token);
+              setCurrentUser(user);
+              handleNavigate('admin');
+            }}
             kpis={landingData.kpis}
           />
         )}

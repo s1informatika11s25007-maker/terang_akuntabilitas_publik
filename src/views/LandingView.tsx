@@ -31,6 +31,7 @@ import {
 interface LandingViewProps {
   onNavigate: (view: string) => void;
   onOpenAuth: (tab?: "login" | "register") => void;
+  onLoginSuccess?: (user: any, token: string) => void;
   kpis: {
     totalPagu: number;
     avgSerapan: number;
@@ -126,6 +127,7 @@ const SLIDE_MOTIONS = [
 export const LandingView: React.FC<LandingViewProps> = ({
   onNavigate,
   onOpenAuth,
+  onLoginSuccess,
   kpis,
 }) => {
   const prefersReducedMotion = useReducedMotion();
@@ -243,11 +245,16 @@ export const LandingView: React.FC<LandingViewProps> = ({
       const data = await res.json();
 
       if (res.ok && data.status === "success") {
-        setAuthSuccess(`Selamat datang, ${data.user.name}! Mengalihkan...`);
+        setAuthSuccess(`Selamat datang, ${data.user.name}! Masuk otomatis...`);
         setTimeout(() => {
-          onOpenAuth("login");
-          onNavigate(data.user.role === "warga" ? "dashboard" : "admin");
-        }, 700);
+          if (onLoginSuccess) {
+            onLoginSuccess(data.user, data.token);
+          } else {
+            localStorage.setItem("terang_user", JSON.stringify(data.user));
+            localStorage.setItem("terang_token", data.token);
+            onNavigate(data.user.role === "warga" ? "dashboard" : "admin");
+          }
+        }, 400);
       } else {
         setAuthError(data.message || "Login gagal. Periksa email dan kata sandi.");
       }
@@ -287,9 +294,14 @@ export const LandingView: React.FC<LandingViewProps> = ({
       if (res.ok && data.status === "success") {
         setAuthSuccess(`Pendaftaran berhasil! Selamat datang, ${data.user.name}.`);
         setTimeout(() => {
-          onOpenAuth("login");
-          onNavigate(data.user.role === "warga" ? "dashboard" : "admin");
-        }, 800);
+          if (onLoginSuccess) {
+            onLoginSuccess(data.user, data.token);
+          } else {
+            localStorage.setItem("terang_user", JSON.stringify(data.user));
+            localStorage.setItem("terang_token", data.token);
+            onNavigate(data.user.role === "warga" ? "dashboard" : "admin");
+          }
+        }, 400);
       } else {
         setAuthError(data.message || "Pendaftaran gagal.");
       }
@@ -921,41 +933,44 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         {/* Quick Fill Demo Shortcuts */}
                         <div className="pt-3 border-t border-slate-200 space-y-2">
                           <span className="text-[11px] font-bold text-slate-500 block">
-                            Atau Isi Instan Akun Demo:
+                            Atau Sekali Klik Masuk Otomatis:
                           </span>
                           <div className="grid grid-cols-3 gap-2">
                             <button
                               type="button"
-                              onClick={(e) => {
+                              disabled={authLoading}
+                              onClick={() => {
                                 setLoginEmail("admin@terang.test");
                                 setLoginPassword("password");
-                                handleSlideLogin(e, "admin@terang.test");
+                                handleSlideLogin(undefined, "admin@terang.test");
                               }}
-                              className="p-2 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                              className="p-2.5 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-[11px] text-center cursor-pointer transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                             >
                               Super Admin
                             </button>
 
                             <button
                               type="button"
-                              onClick={(e) => {
+                              disabled={authLoading}
+                              onClick={() => {
                                 setLoginEmail("verifikator@terang.test");
                                 setLoginPassword("password");
-                                handleSlideLogin(e, "verifikator@terang.test");
+                                handleSlideLogin(undefined, "verifikator@terang.test");
                               }}
-                              className="p-2 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                              className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-[11px] text-center cursor-pointer transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                             >
                               Verifikator
                             </button>
 
                             <button
                               type="button"
-                              onClick={(e) => {
+                              disabled={authLoading}
+                              onClick={() => {
                                 setLoginEmail("instansi@terang.test");
                                 setLoginPassword("password");
-                                handleSlideLogin(e, "instansi@terang.test");
+                                handleSlideLogin(undefined, "instansi@terang.test");
                               }}
-                              className="p-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                              className="p-2.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-[11px] text-center cursor-pointer transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                             >
                               Instansi PUPR
                             </button>
