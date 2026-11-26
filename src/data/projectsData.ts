@@ -26,9 +26,9 @@ export interface Project {
 }
 
 const CONTRACTORS = [
-  'PT Hutama Karya (Persero)',
-  'PT Wijaya Karya (Persero) Tbk',
-  'PT Pembangunan Perumahan (Persero)',
+  'PT Karya Nusantara Mandiri',
+  'PT Sinar Konstruksi Nusantara',
+  'PT Bangun Infrastruktur Sejahtera',
   'PT Horas Mandiri Sejahtera',
   'PT Karya Sumut Lestari',
   'PT Medan Bangun Persada',
@@ -59,7 +59,7 @@ const FEATURED_PROJECTS: Array<Omit<Project, 'id'>> = [
     realisasi: 74575000000, // 95% keuangan
     progres_fisik: 58, // GAP BESAR: delta 37%!
     status: 'berjalan',
-    kontraktor: 'PT Hutama Karya (Persero)',
+    kontraktor: 'PT Karya Nusantara Mandiri',
     tahun: 2024,
     tgl_mulai: '2024-02-15',
     tgl_target: '2024-11-30',
@@ -80,7 +80,7 @@ const FEATURED_PROJECTS: Array<Omit<Project, 'id'>> = [
     realisasi: 106400000000, // 95%
     progres_fisik: 62, // GAP: delta 33%
     status: 'berjalan',
-    kontraktor: 'PT Wijaya Karya (Persero) Tbk',
+    kontraktor: 'PT Sinar Konstruksi Nusantara',
     tahun: 2024,
     tgl_mulai: '2024-01-10',
     tgl_target: '2024-12-15',
@@ -123,7 +123,7 @@ const FEATURED_PROJECTS: Array<Omit<Project, 'id'>> = [
     realisasi: 49680000000, // 92%
     progres_fisik: 88,
     status: 'berjalan',
-    kontraktor: 'PT Pembangunan Perumahan (Persero)',
+    kontraktor: 'PT Bangun Infrastruktur Sejahtera',
     tahun: 2024,
     tgl_mulai: '2024-03-01',
     tgl_target: '2024-12-20',
@@ -187,7 +187,7 @@ const FEATURED_PROJECTS: Array<Omit<Project, 'id'>> = [
     realisasi: 155430000000,
     progres_fisik: 100,
     status: 'selesai',
-    kontraktor: 'PT Wijaya Karya (Persero) Tbk',
+    kontraktor: 'PT Sinar Konstruksi Nusantara',
     tahun: 2024,
     tgl_mulai: '2023-01-15',
     tgl_target: '2024-06-30',

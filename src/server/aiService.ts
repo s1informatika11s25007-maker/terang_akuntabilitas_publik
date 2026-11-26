@@ -53,13 +53,14 @@ export function toolGetSerapan(args: { tahun?: number; daerah?: string; sektor?:
   };
 }
 
-export function toolGetTopDaerah(args: { metrik?: 'serapan' | 'laporan' | 'skor'; urutan?: 'tertinggi' | 'terendah'; limit?: number }) {
+export function toolGetTopDaerah(args: { metrik?: 'serapan' | 'laporan' | 'skor'; urutan?: 'tertinggi' | 'terendah'; limit?: number; tahun?: number }) {
   const limit = args.limit || 5;
   const urutan = args.urutan || 'tertinggi';
   const metrik = args.metrik || 'serapan';
+  const tahun = args.tahun || 2024;
 
   const regionsMap = db.regions.map((reg) => {
-    const regBudgets = db.budgets.filter((b) => b.region_id === reg.id && b.tahun === 2024);
+    const regBudgets = db.budgets.filter((b) => b.region_id === reg.id && b.tahun === tahun);
     const pagu = regBudgets.reduce((acc, cur) => acc + cur.pagu, 0);
     const real = regBudgets.reduce((acc, cur) => acc + cur.realisasi, 0);
     const serapan = calculateAbsorptionRate(real, pagu);
@@ -255,64 +256,182 @@ const toolDeclarations: FunctionDeclaration[] = [
   },
 ];
 
+const SECTOR_SYNONYMS: Array<{ sectorId: string; keywords: RegExp[] }> = [
+  {
+    sectorId: 'sec-kesehatan',
+    keywords: [/\bkesehatan\b/i, /\brsud\b/i, /\bpuskesmas\b/i, /\brumah sakit\b/i, /\bmedis\b/i, /\bstunting\b/i],
+  },
+  {
+    sectorId: 'sec-pendidikan',
+    keywords: [/\bpendidikan\b/i, /\bsekolah\b/i, /\bbeasiswa\b/i, /\bbos\b/i, /\bguru\b/i, /\bruang kelas\b/i],
+  },
+  {
+    sectorId: 'sec-pupr',
+    keywords: [/\bpekerjaan umum\b/i, /\btata ruang\b/i, /\bpupr\b/i, /\bpu\b/i, /\bjalan\b/i, /\bjembatan\b/i, /\bdrainase\b/i, /\baspal\b/i, /\bbendung\b/i, /\binfrastruktur\b/i],
+  },
+  {
+    sectorId: 'sec-perkim',
+    keywords: [/\bperumahan\b/i, /\bpermukiman\b/i, /\bperkim\b/i, /\bair minum\b/i, /\bspam\b/i, /\bsanitasi\b/i, /\bbedah rumah\b/i],
+  },
+  {
+    sectorId: 'sec-pertanian',
+    keywords: [/\bpertanian\b/i, /\bpangan\b/i, /\birigasi\b/i, /\bpupuk\b/i, /\bbibit\b/i, /\btani\b/i],
+  },
+  {
+    sectorId: 'sec-perhubungan',
+    keywords: [/\bperhubungan\b/i, /\blogistik\b/i, /\bterminal\b/i, /\bpju\b/i, /\bdermaga\b/i, /\btransportasi\b/i],
+  },
+  {
+    sectorId: 'sec-lingkungan',
+    keywords: [/\blingkungan\b/i, /\btpa\b/i, /\breboisasi\b/i, /\bsungai\b/i, /\bsampah\b/i],
+  },
+  {
+    sectorId: 'sec-sosial',
+    keywords: [/\bsosial\b/i, /\bkemiskinan\b/i, /\bdisabilitas\b/i, /\bbansos\b/i],
+  },
+  {
+    sectorId: 'sec-pariwisata',
+    keywords: [/\bpariwisata\b/i, /\bwisata\b/i, /\bkreatif\b/i, /\bdanau toba\b/i, /\bbudaya\b/i, /\bumkm\b/i],
+  },
+];
+
+function extractYearFromMessage(lower: string): number {
+  const match = lower.match(/\b(2022|2023|2024|2025)\b/);
+  return match ? Number(match[1]) : 2024;
+}
+
+function extractSectorFromMessage(lower: string): string | undefined {
+  for (const sec of db.sectors) {
+    if (lower.includes(sec.nama.toLowerCase())) {
+      return sec.nama;
+    }
+  }
+  for (const entry of SECTOR_SYNONYMS) {
+    if (entry.keywords.some((rx) => rx.test(lower))) {
+      const found = db.sectors.find((s) => s.id === entry.sectorId);
+      if (found) return found.nama;
+    }
+  }
+  return undefined;
+}
+
+function extractRegionsFromMessage(lower: string): string[] {
+  const matched: string[] = [];
+  for (const reg of db.regions) {
+    const cleanName = reg.nama.toLowerCase().replace(/^(kabupaten|kota)\s+/i, '').trim();
+    if (
+      lower.includes(reg.nama.toLowerCase()) ||
+      lower.includes(cleanName) ||
+      (reg.ibu_kota && lower.includes(reg.ibu_kota.toLowerCase()))
+    ) {
+      if (!matched.includes(reg.nama)) matched.push(reg.nama);
+    }
+  }
+  return matched;
+}
+
+function isTerangDomainQuery(lower: string, matchedRegions: string[], matchedSector?: string): boolean {
+  if (matchedRegions.length > 0 || matchedSector) return true;
+  const domainKeywords = [
+    /\bapbd\b/i,
+    /\banggaran\b/i,
+    /\bserapan\b/i,
+    /\brealisasi\b/i,
+    /\bpagu\b/i,
+    /\bbelanja\b/i,
+    /\bkeuangan\b/i,
+    /\b(pad|dau|dak|dbh)\b/i,
+    /\bproyek\b/i,
+    /\bpembangunan\b/i,
+    /\bfisik\b/i,
+    /\bkontraktor\b/i,
+    /\bmangkrak\b/i,
+    /\bkesenjangan\b/i,
+    /\bgap\b/i,
+    /\baudit\b/i,
+    /\bverifikasi\b/i,
+    /\blaporan\b/i,
+    /\baduan\b/i,
+    /\bpengaduan\b/i,
+    /\blapor\b/i,
+    /\blacak\b/i,
+    /\btrg-\d{4}/i,
+    /\btransparansi\b/i,
+    /\bskor\b/i,
+    /\bperingkat\b/i,
+    /\bterendah\b/i,
+    /\btertinggi\b/i,
+    /\bbanding/i,
+    /\bsumut\b/i,
+    /\bsumatera utara\b/i,
+    /\bdaerah\b/i,
+    /\bkabupaten\b/i,
+    /\bkota\b/i,
+    /\bsektor\b/i,
+    /\bdinas\b/i,
+    /\binspektorat\b/i,
+    /\bterang\b/i,
+  ];
+  return domainKeywords.some((rx) => rx.test(lower));
+}
+
 // Fallback rule-based matching when AI is unavailable or offline
 function fallbackChatResponse(message: string): { reply: string; dataLinks?: string } {
   const lower = message.toLowerCase();
+  const tahun = extractYearFromMessage(lower);
+  const sektorMatch = extractSectorFromMessage(lower);
+  const matchedRegions = extractRegionsFromMessage(lower);
+  const daerahMatch = matchedRegions[0];
 
-  if (lower.includes('banding') || lower.includes('vs') || (lower.includes('medan') && lower.includes('deli serdang'))) {
-    const res = toolBandingkanDaerah({ daerah_a: 'Kota Medan', daerah_b: 'Kabupaten Deli Serdang', tahun: 2024 });
+  if (!isTerangDomainQuery(lower, matchedRegions, sektorMatch)) {
+    return {
+      reply: `Mohon maaf, pertanyaan Anda berada di luar cakupan layanan **Tanya TERANG**. Asisten ini hanya melayani pertanyaan seputar transparansi APBD, proyek publik, skor transparansi, dan laporan warga di Provinsi Sumatera Utara.\n\nBerikut **5 contoh pertanyaan** yang dapat Anda tanyakan:\n1. "Bagaimana serapan APBD Kota Medan tahun 2024?"\n2. "Berapa serapan anggaran sektor kesehatan tahun 2023?"\n3. "Proyek mana saja yang bermasalah atau memiliki kesenjangan tinggi?"\n4. "Daerah mana dengan serapan APBD terendah di Sumut tahun 2024?"\n5. "Bagaimana statistik status laporan warga saat ini?"`,
+    };
+  }
+
+  if (lower.includes('banding') || /\bvs\b/i.test(lower) || matchedRegions.length >= 2) {
+    const regionA = matchedRegions[0] || 'Kota Medan';
+    const regionB = matchedRegions[1] || (regionA === 'Kabupaten Deli Serdang' ? 'Kota Medan' : 'Kabupaten Deli Serdang');
+    const res = toolBandingkanDaerah({ daerah_a: regionA, daerah_b: regionB, tahun });
     if ('error' in res || !res.daerah_a || !res.daerah_b) {
       return { reply: (res as any).error || 'Daerah tidak ditemukan.' };
     }
     return {
-      reply: `Berdasarkan data resmi APBD TA 2024:\n\n• **${res.daerah_a.nama}**: Pagu APBD ${res.daerah_a.pagu_apbd}, realisasi ${res.daerah_a.realisasi} (${res.daerah_a.serapan_persen}). Terdapat ${res.daerah_a.total_laporan} aduan warga (${res.daerah_a.laporan_selesai} selesai).\n• **${res.daerah_b.nama}**: Pagu APBD ${res.daerah_b.pagu_apbd}, realisasi ${res.daerah_b.realisasi} (${res.daerah_b.serapan_persen}). Terdapat ${res.daerah_b.total_laporan} aduan warga (${res.daerah_b.laporan_selesai} selesai).\n\nPerbedaan serapan adalah sekitar ${Math.abs(parseFloat(res.daerah_a.serapan_persen) - parseFloat(res.daerah_b.serapan_persen)).toFixed(1)} poin persentase.`,
+      reply: `Berdasarkan data simulasi APBD TA ${tahun}:\n\n• **${res.daerah_a.nama}**: Pagu APBD ${res.daerah_a.pagu_apbd}, realisasi ${res.daerah_a.realisasi} (${res.daerah_a.serapan_persen}). Terdapat ${res.daerah_a.total_laporan} aduan warga (${res.daerah_a.laporan_selesai} selesai).\n• **${res.daerah_b.nama}**: Pagu APBD ${res.daerah_b.pagu_apbd}, realisasi ${res.daerah_b.realisasi} (${res.daerah_b.serapan_persen}). Terdapat ${res.daerah_b.total_laporan} aduan warga (${res.daerah_b.laporan_selesai} selesai).\n\nPerbedaan serapan adalah sekitar ${Math.abs(parseFloat(res.daerah_a.serapan_persen) - parseFloat(res.daerah_b.serapan_persen)).toFixed(1)} poin persentase.\n\nSumber: data simulasi TERANG (prototipe).`,
       dataLinks: '/insight',
     };
   }
 
   if (lower.includes('mangkrak') || lower.includes('kesenjangan') || lower.includes('masalah') || lower.includes('bermasalah')) {
-    const res = toolGetProyekBermasalah({});
+    const res = toolGetProyekBermasalah({ daerah: daerahMatch });
     const items = res.daftar.map((p) => `• **${p.nama}** (${p.daerah}): Serapan ${p.progres_keuangan} vs Fisik ${p.progres_fisik} (Selisih ${p.selisih_gap}). Risiko: **${p.tingkat_risiko}**. Alasan: ${p.faktor.join(', ')}`).join('\n');
     return {
-      reply: `Ditemukan **${res.jumlah_ditemukan} proyek dengan Indikator Kesenjangan Tinggi** di Sumatera Utara yang memerlukan verifikasi lapangan langsung:\n\n${items}\n\nAnda dapat melihat rincian progres fisik dan mengajukan aduan langsung pada halaman Proyek.`,
+      reply: `Ditemukan **${res.jumlah_ditemukan} proyek dengan Indikator Kesenjangan Tinggi**${daerahMatch ? ` di ${daerahMatch}` : ' di Sumatera Utara'} yang memerlukan verifikasi lapangan langsung:\n\n${items || 'Tidak ada proyek bermasalah pada filter ini.'}\n\nAnda dapat melihat rincian progres fisik dan mengajukan aduan langsung pada halaman Proyek.\n\nSumber: data simulasi TERANG (prototipe).`,
       dataLinks: '/proyek?filter=gap',
     };
   }
 
   if (lower.includes('terendah') || lower.includes('tertinggi') || lower.includes('top') || lower.includes('peringkat')) {
-    const res = toolGetTopDaerah({ metrik: 'serapan', urutan: lower.includes('terendah') ? 'terendah' : 'tertinggi' });
+    const res = toolGetTopDaerah({ metrik: 'serapan', urutan: lower.includes('terendah') ? 'terendah' : 'tertinggi', tahun });
     const items = res.data.map((d, i) => `${i + 1}. **${d.nama}**: Serapan ${d.serapan_persen}% (${d.jumlah_laporan} laporan aduan)`).join('\n');
     return {
-      reply: `Berikut daftar daerah dengan tingkat serapan anggaran TA 2024 ${res.urutan}:\n\n${items}\n\nSumber: Portal Satu Data Kemenkeu DJPK & BPS Sumut.`,
+      reply: `Berikut daftar daerah dengan tingkat serapan anggaran TA ${tahun} ${res.urutan}:\n\n${items}\n\nSumber: data simulasi TERANG (prototipe).`,
       dataLinks: '/dashboard',
     };
   }
 
-  if (lower.includes('laporan') || lower.includes('aduan') || lower.includes('status')) {
-    const res = toolGetStatistikLaporan({});
+  if (lower.includes('laporan') || lower.includes('aduan') || lower.includes('pengaduan') || /\bstatus\b/i.test(lower)) {
+    const res = toolGetStatistikLaporan({ daerah: daerahMatch });
     return {
-      reply: `Hingga saat ini terdapat **${res.total_laporan} laporan warga** di seluruh Sumatera Utara:\n\n• Selesai Ditindaklanjuti: **${res.selesai}** (${res.persentase_selesai})\n• Sedang Dikerjakan: **${res.ditindaklanjuti}**\n• Lolos Verifikasi Inspektorat: **${res.diverifikasi}**\n• Menunggu Tinjauan: **${res.diterima_menunggu}**\n• Tidak Memenuhi Syarat: **${res.ditolak}**\n\nSetiap laporan warga memiliki kode pelacakan TRG-2026-XXXXXX yang dapat dipantau secara terbuka.`,
+      reply: `Hingga saat ini terdapat **${res.total_laporan} laporan warga** di ${res.daerah}:\n\n• Selesai Ditindaklanjuti: **${res.selesai}** (${res.persentase_selesai})\n• Sedang Dikerjakan: **${res.ditindaklanjuti}**\n• Lolos Verifikasi Inspektorat: **${res.diverifikasi}**\n• Menunggu Tinjauan: **${res.diterima_menunggu}**\n• Tidak Memenuhi Syarat: **${res.ditolak}**\n\nSetiap laporan warga memiliki kode pelacakan TRG-2026-XXXXXX yang dapat dipantau secara terbuka.\n\nSumber: data simulasi TERANG (prototipe).`,
       dataLinks: '/laporan',
     };
   }
 
-  // Default serapan query
-  let daerahMatch: string | undefined = undefined;
-  for (const reg of db.regions) {
-    const cleanName = reg.nama.toLowerCase().replace('kabupaten ', '').replace('kota ', '').trim();
-    if (
-      lower.includes(cleanName) ||
-      lower.includes(reg.nama.toLowerCase()) ||
-      (reg.ibu_kota && lower.includes(reg.ibu_kota.toLowerCase()))
-    ) {
-      daerahMatch = reg.nama;
-      break;
-    }
-  }
-
-  const res = toolGetSerapan({ daerah: daerahMatch, tahun: 2024 });
+  // Default serapan query (respecting extracted year, sector, and region)
+  const res = toolGetSerapan({ daerah: daerahMatch, sektor: sektorMatch, tahun });
   return {
-    reply: `Data APBD TA 2024 untuk **${res.daerah}**:\n\n• Total Pagu Anggaran: **${res.total_pagu_formatted}**\n• Realisasi Serapan: **${res.total_realisasi_formatted}**\n• Persentase Serapan: **${res.serapan_persen}**\n\nInformasi ini dihitung dari ${res.jumlah_data} alokasi sektor belanja daerah resmi.`,
+    reply: `Data APBD TA ${tahun} untuk **${res.daerah}** (Sektor: **${res.sektor}**):\n\n• Total Pagu Anggaran: **${res.total_pagu_formatted}**\n• Realisasi Serapan: **${res.total_realisasi_formatted}**\n• Persentase Serapan: **${res.serapan_persen}**\n\nInformasi ini dihitung dari ${res.jumlah_data} alokasi sektor belanja daerah.\n\nSumber: data simulasi TERANG (prototipe).`,
     dataLinks: daerahMatch ? `/dashboard?daerah=${encodeURIComponent(daerahMatch)}` : '/dashboard',
   };
 }
@@ -474,7 +593,7 @@ Deskripsi asli: "${params.deskripsi}"
 Keluarkan format JSON dengan key: judul_saran dan deskripsi_saran.`;
 
     const res = await aiClient.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -700,6 +819,9 @@ export async function autoTriageAllPendingReports(): Promise<{
   }
 
   db.agentStats.autoTriaged += triaged.length;
+  if (triaged.length > 0) {
+    db.scheduleSave();
+  }
 
   return {
     pending_count: pendingReports.length,
@@ -761,6 +883,9 @@ export async function autoDispatchAgencyNotice(reportId?: string): Promise<{
   }
 
   db.agentStats.autoDispatched += dispatches.length;
+  if (dispatches.length > 0) {
+    db.scheduleSave();
+  }
 
   return {
     dispatched_count: dispatches.length,

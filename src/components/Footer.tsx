@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </div>
               <div>
                 <span className="text-lg font-bold text-white font-display tracking-tight block leading-none">TERANG</span>
-                <span className="text-[10px] text-slate-400 tracking-wider font-semibold uppercase">Transparansi &amp; Akuntabilitas Publik</span>
+                <span className="text-[10px] text-slate-400 tracking-wider font-semibold uppercase">Transparansi, Evaluasi, Respons, Akuntabilitas Nusantara</span>
               </div>
             </div>
 

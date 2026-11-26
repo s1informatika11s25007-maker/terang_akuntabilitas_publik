@@ -167,8 +167,8 @@ export const TanyaTerangModal: React.FC<TanyaTerangModalProps> = ({
             <div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <h3 className="font-bold text-sm font-display text-white">Pusat Informasi TERANG</h3>
-                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">
-                  REALTIME DATA
+                <span className="text-[10px] font-bold bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded border border-amber-400/30">
+                  Data simulasi (prototipe)
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-200 truncate">Layanan Informasi Anggaran &amp; Aduan Publik Sumut</p>

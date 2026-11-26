@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { SUMUT_GEOJSON } from '../data/geoJsonSumut';
 import { Project } from '../data/projectsData';
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
@@ -204,8 +205,12 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
   }, [selectedMetric, selectedRegionId, projects, regionMetrics]);
 
   return (
-    <div className="relative w-full h-[360px] sm:h-[480px] rounded-xl overflow-hidden border border-slate-200 shadow-xs bg-slate-100">
-      <div ref={mapContainerRef} className="w-full h-full touch-pan-x touch-pan-y" />
+    <div className="relative w-full h-[360px] sm:h-[480px] rounded-xl overflow-hidden border border-slate-200 shadow-xs bg-[#E8EEF4]">
+      <div
+        ref={mapContainerRef}
+        className="w-full h-full touch-pan-x touch-pan-y bg-[#E8EEF4]"
+        style={{ backgroundColor: '#E8EEF4' }}
+      />
 
       {/* Floating Legend - Collapsible on Mobile, always clear on Desktop */}
       <div className="absolute bottom-3 left-3 z-20 max-w-[calc(100%-24px)] sm:max-w-xs">

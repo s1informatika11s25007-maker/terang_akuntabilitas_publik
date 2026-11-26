@@ -133,7 +133,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         />
 
         {/* Global Filter Form */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-5 sm:p-6 bg-white border border-slate-200 border-t-0 rounded-b-2xl text-xs dashboard-filter-grid">
+        <div className="p-5 sm:p-6 bg-white border border-slate-200 border-t-0 rounded-b-2xl space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Filter Data APBD &amp; Proyek</span>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+              Data simulasi (prototipe)
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs dashboard-filter-grid">
           <div>
             <label className="block font-semibold text-slate-700 mb-1">Tahun Anggaran</label>
             <select
@@ -179,6 +186,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </option>
               ))}
             </select>
+          </div>
           </div>
         </div>
       </div>

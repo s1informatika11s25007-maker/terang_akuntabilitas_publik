@@ -9,7 +9,10 @@ import {
   detectDuplicateReport,
   generateTrackingCode,
   isValidTrackingCode,
+  validateReportStatusTransition,
+  ReportStatus,
 } from './calculations';
+import { db, InvalidStatusTransitionError } from '../server/db';
 
 test('calculateAbsorptionRate: returns accurate percentage bounded 0-100', () => {
   assert.equal(calculateAbsorptionRate(850000000, 1000000000), 85.0);
@@ -114,4 +117,182 @@ test('generateTrackingCode: produces valid TRG-2026-XXXXXX string', () => {
   assert.ok(isValidTrackingCode(code), `Generated code ${code} should match format`);
   assert.equal(isValidTrackingCode('INVALID-CODE'), false);
   assert.equal(isValidTrackingCode('TRG-2025-123456'), false);
+});
+
+test('validateReportStatusTransition: allows only valid report state transitions', () => {
+  const validPairs: Array<[ReportStatus, ReportStatus]> = [
+    ['diterima', 'diverifikasi'],
+    ['diterima', 'ditolak'],
+    ['diverifikasi', 'ditindaklanjuti'],
+    ['ditindaklanjuti', 'selesai'],
+  ];
+
+  for (const [from, to] of validPairs) {
+    const res = validateReportStatusTransition(from, to);
+    assert.equal(res.valid, true, `Expected ${from} -> ${to} to be valid`);
+  }
+
+  const invalidPairs: Array<[ReportStatus, ReportStatus]> = [
+    ['diterima', 'diterima'],
+    ['diterima', 'ditindaklanjuti'],
+    ['diterima', 'selesai'],
+    ['diverifikasi', 'diterima'],
+    ['diverifikasi', 'diverifikasi'],
+    ['diverifikasi', 'ditolak'],
+    ['diverifikasi', 'selesai'],
+    ['ditindaklanjuti', 'diterima'],
+    ['ditindaklanjuti', 'diverifikasi'],
+    ['ditindaklanjuti', 'ditolak'],
+    ['ditindaklanjuti', 'ditindaklanjuti'],
+    ['selesai', 'diterima'],
+    ['selesai', 'diverifikasi'],
+    ['selesai', 'ditindaklanjuti'],
+    ['selesai', 'ditolak'],
+    ['selesai', 'selesai'],
+    ['ditolak', 'diterima'],
+    ['ditolak', 'diverifikasi'],
+    ['ditolak', 'ditindaklanjuti'],
+    ['ditolak', 'selesai'],
+    ['ditolak', 'ditolak'],
+  ];
+
+  for (const [from, to] of invalidPairs) {
+    const res = validateReportStatusTransition(from, to);
+    assert.equal(res.valid, false, `Expected ${from} -> ${to} to be invalid`);
+    assert.ok(res.message && res.message.length > 0);
+  }
+});
+
+test('db.updateReportStatus: enforces valid transitions and throws 409 on invalid transitions', () => {
+  const initialReportsCount = db.reports.length;
+  const initialLogsCount = db.activityLogs.length;
+
+  const { report: createdA } = db.createReport({
+    region_id: 'reg-medan',
+    sector_id: 'sec-pupr',
+    kategori: 'jalan_rusak',
+    judul: 'Uji State Machine Jalur Normal',
+    deskripsi: 'Deskripsi uji coba transisi status laporan warga yang lengkap.',
+    lat: 3.5952,
+    lng: 98.6722,
+    alamat: 'Medan',
+  });
+
+  const { report: createdB } = db.createReport({
+    region_id: 'reg-medan',
+    sector_id: 'sec-pupr',
+    kategori: 'jalan_rusak',
+    judul: 'Uji State Machine Jalur Tolak',
+    deskripsi: 'Deskripsi uji coba transisi penolakan laporan warga yang lengkap.',
+    lat: 3.5952,
+    lng: 98.6722,
+    alamat: 'Medan',
+  });
+
+  try {
+    // Invalid jump: diterima -> selesai
+    assert.throws(
+      () =>
+        db.updateReportStatus({
+          reportId: createdA.id,
+          status: 'selesai',
+          catatan: 'Loncat',
+          petugas: 'Tester',
+          userEmail: 'admin@terang.test',
+          role: 'super_admin',
+        }),
+      (err: any) => err instanceof InvalidStatusTransitionError && err.statusCode === 409
+    );
+
+    // Valid chain: diterima -> diverifikasi -> ditindaklanjuti -> selesai
+    const verified = db.updateReportStatus({
+      reportId: createdA.id,
+      status: 'diverifikasi',
+      catatan: 'Verifikasi ok',
+      petugas: 'Verifikator',
+      userEmail: 'verifikator@terang.test',
+      role: 'verifikator',
+    });
+    assert.equal(verified?.status, 'diverifikasi');
+
+    // Invalid: diverifikasi -> ditolak
+    assert.throws(
+      () =>
+        db.updateReportStatus({
+          reportId: createdA.id,
+          status: 'ditolak',
+          catatan: 'Tolak terlambat',
+          petugas: 'Verifikator',
+          userEmail: 'verifikator@terang.test',
+          role: 'verifikator',
+        }),
+      (err: any) => err instanceof InvalidStatusTransitionError && err.statusCode === 409
+    );
+
+    const followedUp = db.updateReportStatus({
+      reportId: createdA.id,
+      status: 'ditindaklanjuti',
+      catatan: 'Sedang dikerjakan',
+      petugas: 'Instansi',
+      userEmail: 'instansi@terang.test',
+      role: 'instansi',
+    });
+    assert.equal(followedUp?.status, 'ditindaklanjuti');
+
+    const completed = db.updateReportStatus({
+      reportId: createdA.id,
+      status: 'selesai',
+      catatan: 'Selesai',
+      petugas: 'Instansi',
+      userEmail: 'instansi@terang.test',
+      role: 'instansi',
+    });
+    assert.equal(completed?.status, 'selesai');
+
+    // Invalid from terminal state selesai
+    assert.throws(
+      () =>
+        db.updateReportStatus({
+          reportId: createdA.id,
+          status: 'ditindaklanjuti',
+          catatan: 'Mundur',
+          petugas: 'Instansi',
+          userEmail: 'instansi@terang.test',
+          role: 'instansi',
+        }),
+      (err: any) => err instanceof InvalidStatusTransitionError && err.statusCode === 409
+    );
+
+    // Valid: diterima -> ditolak, then terminal
+    const rejected = db.updateReportStatus({
+      reportId: createdB.id,
+      status: 'ditolak',
+      alasanTolak: 'Lokasi tidak ditemukan di wilayah terdaftar',
+      catatan: 'Ditolak',
+      petugas: 'Verifikator',
+      userEmail: 'verifikator@terang.test',
+      role: 'verifikator',
+    });
+    assert.equal(rejected?.status, 'ditolak');
+
+    assert.throws(
+      () =>
+        db.updateReportStatus({
+          reportId: createdB.id,
+          status: 'diverifikasi',
+          catatan: 'Buka kembali',
+          petugas: 'Verifikator',
+          userEmail: 'verifikator@terang.test',
+          role: 'verifikator',
+        }),
+      (err: any) => err instanceof InvalidStatusTransitionError && err.statusCode === 409
+    );
+  } finally {
+    db.cancelPendingSave();
+    db.reports = db.reports.filter((r) => r.id !== createdA.id && r.id !== createdB.id);
+    if (db.activityLogs.length > initialLogsCount) {
+      db.activityLogs.splice(0, db.activityLogs.length - initialLogsCount);
+    }
+    assert.equal(db.reports.length, initialReportsCount);
+  }
 });

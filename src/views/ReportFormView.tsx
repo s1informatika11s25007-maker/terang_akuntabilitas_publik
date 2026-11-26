@@ -52,9 +52,8 @@ export const ReportFormView: React.FC<ReportFormViewProps> = ({
   const [honeypot, setHoneypot] = useState<string>('');
 
   // Photo uploads
-  const [photos, setPhotos] = useState<string[]>([
-    'https://images.unsplash.com/photo-1541888946425-d0fbb18615f3?w=800&auto=format&fit=crop&q=80',
-  ]);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [isCompressingPhotos, setIsCompressingPhotos] = useState(false);
 
   // AI Assist & Submission States
   const [isClarifying, setIsClarifying] = useState(false);
@@ -130,6 +129,81 @@ export const ReportFormView: React.FC<ReportFormViewProps> = ({
       console.error(e);
     } finally {
       setIsClarifying(false);
+    }
+  };
+
+  const compressImageFile = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const maxSide = 1000;
+          let { width, height } = img;
+          if (width > maxSide || height > maxSide) {
+            const scale = maxSide / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error('Canvas tidak tersedia untuk memproses gambar.'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          URL.revokeObjectURL(objectUrl);
+          resolve(dataUrl);
+        } catch (err) {
+          URL.revokeObjectURL(objectUrl);
+          reject(err);
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error(`Gagal membaca file gambar ${file.name}.`));
+      };
+      img.src = objectUrl;
+    });
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    const remaining = 3 - photos.length;
+    if (remaining <= 0) {
+      setErrorMessage('Maksimal 3 foto bukti yang dapat diunggah.');
+      e.target.value = '';
+      return;
+    }
+
+    const files = Array.from(fileList).filter((f) => f.type.startsWith('image/'));
+    if (files.length === 0) {
+      setErrorMessage('Pilih file gambar yang valid (JPG, PNG, WebP).');
+      e.target.value = '';
+      return;
+    }
+
+    if (files.length > remaining) {
+      setErrorMessage(`Maksimal 3 foto bukti. Hanya ${remaining} foto tambahan yang diproses.`);
+    } else {
+      setErrorMessage(null);
+    }
+
+    const selected = files.slice(0, remaining);
+    setIsCompressingPhotos(true);
+    try {
+      const compressed = await Promise.all(selected.map((file) => compressImageFile(file)));
+      setPhotos((prev) => [...prev, ...compressed].slice(0, 3));
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Gagal memproses foto bukti.');
+    } finally {
+      setIsCompressingPhotos(false);
+      e.target.value = '';
     }
   };
 
@@ -545,11 +619,11 @@ export const ReportFormView: React.FC<ReportFormViewProps> = ({
 
             {/* Upload Foto Bukti */}
             <div className="space-y-2 pt-2">
-              <label className="block font-semibold text-slate-700">Foto Bukti Fisik Lapangan (1 - 3 Foto)</label>
+              <label className="block font-semibold text-slate-700">Foto Bukti Fisik Lapangan (Maks. 3 Foto, Opsional)</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {photos.map((p, idx) => (
                   <div key={idx} className="relative rounded-lg overflow-hidden border border-slate-200 h-24 group">
-                    <img src={p} alt="Bukti" className="w-full h-full object-cover" />
+                    <img src={p} alt={`Bukti ${idx + 1}`} className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setPhotos(photos.filter((_, i) => i !== idx))}
@@ -561,23 +635,25 @@ export const ReportFormView: React.FC<ReportFormViewProps> = ({
                   </div>
                 ))}
                 {photos.length < 3 && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      // Demo preset real-world photo attachment
-                      const sampleBukti = [
-                        'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=800&auto=format&fit=crop&q=80',
-                        'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&auto=format&fit=crop&q=80',
-                      ];
-                      setPhotos([...photos, sampleBukti[photos.length % sampleBukti.length]]);
-                    }}
-                    className="h-24 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center text-slate-500 hover:border-[#0FA3B1] hover:text-[#0FA3B1] transition-colors"
-                  >
+                  <label className="h-24 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center text-slate-500 hover:border-[#0FA3B1] hover:text-[#0FA3B1] transition-colors cursor-pointer px-2 text-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handlePhotoUpload}
+                      disabled={isCompressingPhotos}
+                      className="sr-only"
+                    />
                     <Camera className="w-5 h-5 mb-1" />
-                    <span className="text-[10px] font-medium">+ Tambah Foto</span>
-                  </button>
+                    <span className="text-[10px] font-medium">
+                      {isCompressingPhotos ? 'Mengompres foto...' : '+ Pilih Foto (Maks. 3)'}
+                    </span>
+                  </label>
                 )}
               </div>
+              {photos.length === 0 && (
+                <p className="text-[11px] text-slate-400">Belum ada foto bukti</p>
+              )}
             </div>
 
             {/* Identitas Pelapor & Anonimitas */}
@@ -695,6 +771,19 @@ export const ReportFormView: React.FC<ReportFormViewProps> = ({
                   {isAnonim ? 'Dirahasiakan (Anonim)' : `${namaPelapor || 'Warga'} · Kontak tersimpan aman`}
                 </p>
               </div>
+
+              <div>
+                <span className="text-slate-400 text-[11px] uppercase tracking-wider block">Foto Bukti</span>
+                {photos.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-2 mt-1.5">
+                    {photos.map((p, idx) => (
+                      <img key={idx} src={p} alt={`Preview bukti ${idx + 1}`} className="w-full h-16 object-cover rounded-lg border border-slate-200" />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-500 mt-0.5">Belum ada foto bukti</p>
+                )}
+              </div>
             </div>
 
             <div className="bg-teal-50 border border-teal-200 p-3 rounded-lg text-teal-800 text-[11px]">
@@ -787,6 +876,7 @@ export const ReportFormView: React.FC<ReportFormViewProps> = ({
                 setStep(1);
                 setJudul('');
                 setDeskripsi('');
+                setPhotos([]);
                 setSubmissionResult(null);
               }}
               className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors"

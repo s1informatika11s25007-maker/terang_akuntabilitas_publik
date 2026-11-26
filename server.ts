@@ -3,7 +3,7 @@ import express from "express";
 import path from "node:path";
 import fs from "node:fs";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
-import { db, DEMO_USERS } from "./src/server/db.js";
+import { db, DEMO_USERS, InvalidStatusTransitionError } from "./src/server/db.js";
 import {
   askTanyaTerang,
   autoTriaseReport,
@@ -686,6 +686,7 @@ app.post("/api/v1/reports", async (req, res) => {
     });
     report.ai_urgensi = triage.urgensi;
     report.ai_ringkasan = triage.ringkasan;
+    db.scheduleSave();
 
     res.status(201).json({
       status: "success",
@@ -1075,24 +1076,32 @@ app.post("/api/admin/reports/:id/verify", requireAdmin("super_admin", "verifikat
     res.status(422).json({ status: "error", message: "Catatan verifikasi maksimal 2.000 karakter." });
     return;
   }
-  const report = db.updateReportStatus({
-    reportId: req.params.id,
-    status: "diverifikasi",
-    catatan:
-      catatan ||
-      "Laporan telah diverifikasi faktual dan memenuhi syarat administrasi.",
-    petugas: adminUser.name,
-    userEmail: adminUser.email,
-    role: adminUser.role,
-  });
+  try {
+    const report = db.updateReportStatus({
+      reportId: req.params.id,
+      status: "diverifikasi",
+      catatan:
+        catatan ||
+        "Laporan telah diverifikasi faktual dan memenuhi syarat administrasi.",
+      petugas: adminUser.name,
+      userEmail: adminUser.email,
+      role: adminUser.role,
+    });
 
-  if (!report) {
-    res
-      .status(404)
-      .json({ status: "error", message: "Laporan tidak ditemukan" });
-    return;
+    if (!report) {
+      res
+        .status(404)
+        .json({ status: "error", message: "Laporan tidak ditemukan" });
+      return;
+    }
+    res.json({ status: "success", data: report });
+  } catch (err: any) {
+    if (err instanceof InvalidStatusTransitionError) {
+      res.status(409).json({ status: "error", message: err.message });
+      return;
+    }
+    throw err;
   }
-  res.json({ status: "success", data: report });
 });
 
 // POST /api/admin/reports/:id/reject
@@ -1106,23 +1115,31 @@ app.post("/api/admin/reports/:id/reject", requireAdmin("super_admin", "verifikat
     return;
   }
 
-  const report = db.updateReportStatus({
-    reportId: req.params.id,
-    status: "ditolak",
-    alasanTolak: alasan_tolak,
-    catatan: `Laporan ditolak: ${alasan_tolak}`,
-    petugas: adminUser.name,
-    userEmail: adminUser.email,
-    role: adminUser.role,
-  });
+  try {
+    const report = db.updateReportStatus({
+      reportId: req.params.id,
+      status: "ditolak",
+      alasanTolak: alasan_tolak,
+      catatan: `Laporan ditolak: ${alasan_tolak}`,
+      petugas: adminUser.name,
+      userEmail: adminUser.email,
+      role: adminUser.role,
+    });
 
-  if (!report) {
-    res
-      .status(404)
-      .json({ status: "error", message: "Laporan tidak ditemukan" });
-    return;
+    if (!report) {
+      res
+        .status(404)
+        .json({ status: "error", message: "Laporan tidak ditemukan" });
+      return;
+    }
+    res.json({ status: "success", data: report });
+  } catch (err: any) {
+    if (err instanceof InvalidStatusTransitionError) {
+      res.status(409).json({ status: "error", message: err.message });
+      return;
+    }
+    throw err;
   }
-  res.json({ status: "success", data: report });
 });
 
 // POST /api/admin/reports/:id/status
@@ -1137,23 +1154,31 @@ app.post("/api/admin/reports/:id/status", requireAdmin("super_admin", "verifikat
     res.status(422).json({ status: "error", message: "Catatan maksimal 2.000 karakter." });
     return;
   }
-  const report = db.updateReportStatus({
-    reportId: req.params.id,
-    status,
-    catatan: catatan || `Status laporan diperbarui menjadi ${status}.`,
-    fotoTindakLanjut: typeof foto_tindak_lanjut === "string" && /^https:\/\//i.test(foto_tindak_lanjut) && foto_tindak_lanjut.length <= 1000 ? foto_tindak_lanjut : undefined,
-    petugas: adminUser.name,
-    userEmail: adminUser.email,
-    role: adminUser.role,
-  });
+  try {
+    const report = db.updateReportStatus({
+      reportId: req.params.id,
+      status,
+      catatan: catatan || `Status laporan diperbarui menjadi ${status}.`,
+      fotoTindakLanjut: typeof foto_tindak_lanjut === "string" && /^https:\/\//i.test(foto_tindak_lanjut) && foto_tindak_lanjut.length <= 1000 ? foto_tindak_lanjut : undefined,
+      petugas: adminUser.name,
+      userEmail: adminUser.email,
+      role: adminUser.role,
+    });
 
-  if (!report) {
-    res
-      .status(404)
-      .json({ status: "error", message: "Laporan tidak ditemukan" });
-    return;
+    if (!report) {
+      res
+        .status(404)
+        .json({ status: "error", message: "Laporan tidak ditemukan" });
+      return;
+    }
+    res.json({ status: "success", data: report });
+  } catch (err: any) {
+    if (err instanceof InvalidStatusTransitionError) {
+      res.status(409).json({ status: "error", message: err.message });
+      return;
+    }
+    throw err;
   }
-  res.json({ status: "success", data: report });
 });
 
 // POST /api/admin/reports/:id/agency-response
@@ -1182,6 +1207,16 @@ app.post("/api/admin/reports/:id/agency-response", requireAdmin("super_admin", "
     return;
   }
   res.json({ status: "success", data: report });
+});
+
+// POST /api/admin/reset-demo (super_admin only)
+app.post("/api/admin/reset-demo", requireAdmin("super_admin"), (req, res) => {
+  db.resetDemo();
+  res.json({
+    status: "success",
+    message: "Data demo (laporan, dukungan, dan log aktivitas) berhasil dikembalikan ke kondisi awal.",
+    total_reports: db.reports.length,
+  });
 });
 
 // POST /api/admin/import (CSV import via UI)

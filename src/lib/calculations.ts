@@ -13,6 +13,8 @@ export interface ProjectData {
   lng?: number;
 }
 
+export type ReportStatus = 'diterima' | 'diverifikasi' | 'ditindaklanjuti' | 'selesai' | 'ditolak';
+
 export interface ReportItem {
   id: string;
   tracking_code: string;
@@ -21,10 +23,33 @@ export interface ReportItem {
   kategori: string;
   lat: number;
   lng: number;
-  status: 'diterima' | 'diverifikasi' | 'ditindaklanjuti' | 'selesai' | 'ditolak';
+  status: ReportStatus;
   created_at: string;
   verified_at?: string;
   completed_at?: string;
+}
+
+export const ALLOWED_REPORT_TRANSITIONS: Record<ReportStatus, readonly ReportStatus[]> = {
+  diterima: ['diverifikasi', 'ditolak'],
+  diverifikasi: ['ditindaklanjuti'],
+  ditindaklanjuti: ['selesai'],
+  selesai: [],
+  ditolak: [],
+};
+
+export function validateReportStatusTransition(
+  fromStatus: ReportStatus,
+  toStatus: ReportStatus
+): { valid: boolean; message?: string } {
+  const allowed = ALLOWED_REPORT_TRANSITIONS[fromStatus] || [];
+  if (allowed.includes(toStatus)) {
+    return { valid: true };
+  }
+  const allowedLabel = allowed.length > 0 ? allowed.join(' atau ') : 'tidak ada (status akhir)';
+  return {
+    valid: false,
+    message: `Transisi status laporan tidak valid: status '${fromStatus}' tidak dapat diubah menjadi '${toStatus}'. Transisi yang diizinkan: ${allowedLabel}.`,
+  };
 }
 
 /**

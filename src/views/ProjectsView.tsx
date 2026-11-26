@@ -102,6 +102,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
       {/* Filter and Search Bar */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Filter Katalog Proyek</span>
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+            Data simulasi (prototipe)
+          </span>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           {/* Search box */}
           <div className="relative">

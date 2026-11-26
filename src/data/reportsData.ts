@@ -116,7 +116,7 @@ export const REPORTS: CivicReport[] = [
       report_id: 'rep-1',
       instansi: 'Dinas PUPR Provinsi Sumatera Utara - Bidang Bina Marga',
       pejabat: 'Ir. Hendra Lubis, M.Si',
-      tanggapan: 'Terima kasih atas laporan masyarakat. Kami telah menginstruksikan PPK dan kontraktor PT Hutama Karya untuk menambah shift kerja proteksi lereng mulai minggu ini. Pengawasan harian ditingkatkan untuk mengejar ketertinggalan progres fisik 37%.',
+      tanggapan: 'Terima kasih atas laporan masyarakat. Kami telah menginstruksikan PPK dan kontraktor PT Karya Nusantara Mandiri untuk menambah shift kerja proteksi lereng mulai minggu ini. Pengawasan harian ditingkatkan untuk mengejar ketertinggalan progres fisik 37%.',
       created_at: '2026-03-08 14:00',
     },
     ai_kategori: 'proyek_mangkrak',

@@ -6,6 +6,7 @@ coverage/
 .idea/
 *.log
 tmp_*.csv
+data/
 .env
 .env.*
 !.env.example

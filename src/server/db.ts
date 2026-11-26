@@ -11,8 +11,17 @@ import {
   calculateTransparencyScore,
   detectDuplicateReport,
   generateTrackingCode,
+  validateReportStatusTransition,
   TransparencyScoreResult,
 } from '../lib/calculations.js';
+
+export class InvalidStatusTransitionError extends Error {
+  public readonly statusCode = 409;
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidStatusTransitionError';
+  }
+}
 
 export interface ActivityLog {
   id: string;
@@ -76,15 +85,42 @@ function parseCSVLine(text: string): string[] {
   return result;
 }
 
+function createInitialReports(): CivicReport[] {
+  return structuredClone(REPORTS);
+}
+
+function createInitialActivityLogs(): ActivityLog[] {
+  return [
+    {
+      id: 'act-1',
+      user_email: 'admin@terang.test',
+      role: 'super_admin',
+      aksi: 'Inisialisasi Sistem',
+      subjek: 'Sinkronisasi data APBD Sumatera Utara 2022-2025',
+      created_at: '2026-03-01 08:00:00',
+    },
+    {
+      id: 'act-2',
+      user_email: 'verifikator@terang.test',
+      role: 'verifikator',
+      aksi: 'Verifikasi Laporan',
+      subjek: 'Memvalidasi laporan TRG-2026-F9A27D Jalan Medan-Berastagi',
+      created_at: '2026-03-02 10:15:00',
+    },
+  ];
+}
+
 class DatabaseStore {
   public regions: Region[] = [...REGIONS];
   public sectors: Sector[] = [...SECTORS];
   public budgets: BudgetRecord[] = [...BUDGETS];
   public projects: Project[] = [...PROJECTS];
-  public reports: CivicReport[] = [...REPORTS];
+  public reports: CivicReport[] = createInitialReports();
   public geoJsonData: any = null;
   public supports: Set<string> = new Set(); // hash: report_id + fingerprint
   public agentAutoPilotActive: boolean = true;
+  private stateFilePath: string = path.resolve(process.cwd(), 'data', 'state.json');
+  private saveTimer: ReturnType<typeof setTimeout> | null = null;
   public agentStats = {
     totalScans: 0,
     autoTriaged: 0,
@@ -124,24 +160,7 @@ class DatabaseStore {
     },
   ];
 
-  public activityLogs: ActivityLog[] = [
-    {
-      id: 'act-1',
-      user_email: 'admin@terang.test',
-      role: 'super_admin',
-      aksi: 'Inisialisasi Sistem',
-      subjek: 'Sinkronisasi data APBD Sumatera Utara 2022-2025',
-      created_at: '2026-03-01 08:00:00',
-    },
-    {
-      id: 'act-2',
-      user_email: 'verifikator@terang.test',
-      role: 'verifikator',
-      aksi: 'Verifikasi Laporan',
-      subjek: 'Memvalidasi laporan TRG-2026-F9A27D Jalan Medan-Berastagi',
-      created_at: '2026-03-02 10:15:00',
-    },
-  ];
+  public activityLogs: ActivityLog[] = createInitialActivityLogs();
 
   public addAgentLog(entry: {
     level: 'info' | 'warn' | 'success' | 'action';
@@ -163,6 +182,75 @@ class DatabaseStore {
 
   constructor() {
     this.loadRealCSVData();
+    this.loadPersistedState();
+  }
+
+  public loadPersistedState(filePath: string = this.stateFilePath) {
+    try {
+      if (!fs.existsSync(filePath)) return;
+      const raw = fs.readFileSync(filePath, 'utf8');
+      if (!raw.trim()) return;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed.reports)) {
+        this.reports = parsed.reports;
+      }
+      if (Array.isArray(parsed.supports)) {
+        this.supports = new Set(parsed.supports.filter((item: unknown): item is string => typeof item === 'string'));
+      }
+      if (Array.isArray(parsed.activityLogs)) {
+        this.activityLogs = parsed.activityLogs;
+      }
+    } catch (err) {
+      console.warn('State persistence load warning:', err);
+    }
+  }
+
+  public persistStateSync(filePath: string = this.stateFilePath) {
+    try {
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const payload = {
+        reports: this.reports,
+        supports: Array.from(this.supports),
+        activityLogs: this.activityLogs,
+        savedAt: new Date().toISOString(),
+      };
+      fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf8');
+    } catch (err) {
+      console.warn('State persistence save warning:', err);
+    }
+  }
+
+  public scheduleSave() {
+    if (this.saveTimer) {
+      clearTimeout(this.saveTimer);
+    }
+    this.saveTimer = setTimeout(() => {
+      this.saveTimer = null;
+      this.persistStateSync();
+    }, 500);
+    if (typeof this.saveTimer.unref === 'function') {
+      this.saveTimer.unref();
+    }
+  }
+
+  public cancelPendingSave() {
+    if (this.saveTimer) {
+      clearTimeout(this.saveTimer);
+      this.saveTimer = null;
+    }
+  }
+
+  public resetDemo() {
+    this.cancelPendingSave();
+    this.reports = createInitialReports();
+    this.supports = new Set();
+    this.activityLogs = createInitialActivityLogs();
+    if (fs.existsSync(this.stateFilePath)) {
+      fs.unlinkSync(this.stateFilePath);
+    }
   }
 
   public loadRealCSVData() {
@@ -406,7 +494,7 @@ class DatabaseStore {
       status: 'diterima',
       dukungan_count: 1,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
-      foto_bukti: data.foto_bukti && data.foto_bukti.length > 0 ? data.foto_bukti : ['https://images.unsplash.com/photo-1541888946425-d0fbb18615f3?w=800&auto=format&fit=crop&q=80'],
+      foto_bukti: Array.isArray(data.foto_bukti) && data.foto_bukti.length > 0 ? data.foto_bukti : [],
       updates: [
         {
           id: `upd-${Date.now()}`,
@@ -436,6 +524,8 @@ class DatabaseStore {
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
     });
 
+    this.scheduleSave();
+
     return { report: newReport, duplicateCheck };
   }
 
@@ -451,6 +541,7 @@ class DatabaseStore {
     const rep = this.reports.find((r) => r.id === reportId);
     if (rep) {
       rep.dukungan_count++;
+      this.scheduleSave();
       return { success: true, newCount: rep.dukungan_count };
     }
     return { success: false, newCount: 0 };
@@ -471,6 +562,13 @@ class DatabaseStore {
     if (!rep) return null;
 
     const oldStatus = rep.status;
+    const transition = validateReportStatusTransition(oldStatus, params.status);
+    if (!transition.valid) {
+      throw new InvalidStatusTransitionError(
+        transition.message || `Transisi status dari '${oldStatus}' ke '${params.status}' tidak diizinkan.`
+      );
+    }
+
     rep.status = params.status;
     if (params.alasanTolak) rep.alasan_tolak = params.alasanTolak;
     if (params.status === 'diverifikasi') {
@@ -505,6 +603,8 @@ class DatabaseStore {
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
     });
 
+    this.scheduleSave();
+
     return rep;
   }
 
@@ -538,6 +638,8 @@ class DatabaseStore {
       subjek: `Tanggapan pada laporan ${rep.tracking_code}`,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
     });
+
+    this.scheduleSave();
 
     return rep;
   }

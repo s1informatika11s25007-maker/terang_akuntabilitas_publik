@@ -33,12 +33,35 @@ const SECTOR_WEIGHTS: Record<string, number> = {
   'sec-pariwisata': 0.02,
 };
 
+// Deterministic FNV-1a seeded hash -> [0, 1)
+function seededUnit(seed: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967296;
+}
+
+const SECTOR_SERAPAN_OFFSET: Record<string, number> = {
+  'sec-pupr': -0.054,
+  'sec-pendidikan': 0.023,
+  'sec-kesehatan': 0.039,
+  'sec-perkim': -0.019,
+  'sec-pertanian': 0.014,
+  'sec-perhubungan': -0.027,
+  'sec-lingkungan': -0.036,
+  'sec-sosial': 0.031,
+  'sec-pariwisata': -0.012,
+};
+
 // Seed budgets
 let idCounter = 1;
 for (const reg of REGIONS) {
   // Region total APBD scale based on population and economic tier
   // Medan has ~6.5 Trillion, Deli Serdang ~4.2T, smaller reg ~1.1T - 1.8T
   const baseAPBD = Math.round((reg.populasi * 1800000 + 750000000000) / 10000000) * 10000000;
+  const regMod = (seededUnit(`reg:${reg.id}`) * 0.13) - 0.065;
 
   for (const year of YEARS) {
     // Inflation / growth factor over years
@@ -47,7 +70,8 @@ for (const reg of REGIONS) {
 
     for (const sec of SECTORS) {
       const weight = SECTOR_WEIGHTS[sec.id] || 0.05;
-      const pagu = Math.round((yearAPBD * weight) / 1000000) * 1000000;
+      const paguJitter = 0.96 + seededUnit(`pagu:${reg.id}:${sec.id}:${year}`) * 0.08;
+      const pagu = Math.round((yearAPBD * weight * paguJitter) / 1000000) * 1000000;
 
       // Realistic realization: historically 74% to 94%
       // 2025 is current year, so ~68% - 84%
@@ -57,13 +81,12 @@ for (const reg of REGIONS) {
       if (year === 2024) baseSerapan = 0.89;
       if (year === 2025) baseSerapan = 0.76;
 
-      // Sector-specific variances (PUPR often lags due to land acquisition)
-      const secMod = sec.id === 'sec-pupr' ? -0.06 : sec.id === 'sec-kesehatan' ? 0.04 : 0;
-      // Region variance using charCode seed
-      const regMod = ((reg.nama.charCodeAt(0) + reg.nama.charCodeAt(reg.nama.length - 1)) % 15 - 7) / 100;
-      
-      const rate = Math.min(0.98, Math.max(0.55, baseSerapan + secMod + regMod));
-      const realisasi = Math.round(pagu * rate / 100000) * 100000;
+      // Deterministic per-sector, per-region, and per-year variation
+      const secMod = SECTOR_SERAPAN_OFFSET[sec.id] ?? 0;
+      const cellJitter = (seededUnit(`serapan:${reg.id}:${sec.id}:${year}`) * 0.058) - 0.029;
+
+      const rate = Math.min(0.978, Math.max(0.555, baseSerapan + secMod + regMod + cellJitter));
+      const realisasi = Math.round((pagu * rate) / 10000) * 10000;
       const serapan_persen = Number(((realisasi / pagu) * 100).toFixed(2));
       const sumber = SOURCES[(reg.populasi + year + sec.nama.length) % SOURCES.length];
 

@@ -1,241 +1,67 @@
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="380" alt="3D Anime Coding Developer Animation" />
+# TERANG — Transparansi, Evaluasi, Respons, Akuntabilitas Nusantara
 
-  <br />
+**Versi 1.3.0 — Tema Terang Profesional + SuperAgent Sekali Klik**
 
-  <h1>💡 Terang-akuntablitas_publik</h1>
-  <p><strong>TERANG — Transparansi & Evaluasi Realisasi Anggaran Negara</strong></p>
+Aplikasi web React + TypeScript + Vite dengan server Express untuk dashboard APBD Sumatera Utara, katalog proyek publik, pelaporan warga, pelacakan aduan, analisis, dan panel pengelola.
 
-  <a href="https://github.com/s1informatika11s25007-maker/terang_akuntabilitas_publik">
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=20&pause=1000&color=0FA3B1&center=true&vCenter=true&width=650&lines=%F0%9F%92%A1+Transparansi+APBD+33+Kabupaten%2FKota+Sumut;%F0%9F%A4%96+SuperAgent+AI+Pengawasan+Otonom+1-Klik;%F0%9F%97%BA%EF%B8%8F+Pemetaan+GIS+Interaktif+Proyek+Publik;%F0%9F%9D%A1%EF%B8%8F+Moderasi+Aduan+Faktual+%26+Timeline+Publik;%F0%9F%93%88+Analisis+Prediktif+Deviasi+Fisik+vs+Keuangan" alt="Typing SVG" />
-  </a>
+## Menjalankan secara lokal
 
-  <br />
-  <br />
-
-  [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge&logo=apache)](https://opensource.org/licenses/Apache-2.0)
-  [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-  [![Vite](https://img.shields.io/badge/Vite-5.4.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-  [![Google Gemini AI](https://img.shields.io/badge/Google_Gemini-AI_Inside-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
-
-  <br />
-
-  <img src="https://raw.githubusercontent.com/andrelugmes/andrelugmes/master/assets/line.gif" width="100%" alt="Animated Line Divider" />
-</div>
-
----
-
-> **💡 TERANG (Transparansi & Evaluasi Realisasi Anggaran Negara)** adalah platform digital pengawasan akuntabilitas publik dan transparansi APBD Sumatera Utara berbasis AI otonom, pemetaan GIS interaktif, dan moderasi aduan warga secara real-time. Platform ini memungkinkan publik dan instansi pemerintah memantau deviasi fisik vs keuangan proyek APBD di 33 Kabupaten/Kota secara presisi dan akuntabel.
-
----
-
-## 🏗️ Diagram Alur Kerja & Arsitektur Sistem
-
-```mermaid
-graph TD
-  subgraph PUBLIC_INPUT["🌐 Input Publik & Sensor Real-Time"]
-    A["📝 Aduan Warga Faktual"] -->|Auto GPS & Evidence| B["⚡ API Gateway Server"]
-    C["🛰️ BMKG & Open-Meteo API"] -->|Cuaca & Bencana| B
-    D["📊 Data APBD & CSV Proyek"] -->|Import APBD| B
-  end
-
-  subgraph AI_ENGINE["🤖 SuperAgent AI Otonom Engine"]
-    B --> E["🎯 Auto-Triage Urgensi 1-5"]
-    E --> F["🧠 Gemini AI Analysis & Risk Score"]
-    F --> G["📄 Auto-Dispatch Nota Dinas"]
-  end
-
-  subgraph RBAC_PANEL["🛡️ Panel Moderasi & Visualisasi"]
-    G --> H["🛡️ Inspektorat (Verifikasi)"]
-    G --> I["🏛️ Dinas PUPR (Tanggapan Resmi)"]
-    F --> J["🗺️ Dashboard GIS Interaktif & Skor Transparansi"]
-  end
-
-  classDef ai fill:#0B7C8A,stroke:#0FA3B1,stroke-width:2px,color:#fff;
-  classDef public fill:#10B981,stroke:#059669,stroke-width:2px,color:#fff;
-  classDef rbac fill:#6366F1,stroke:#4F46E5,stroke-width:2px,color:#fff;
-  class E,F,G ai;
-  class A,C,D public;
-  class H,I,J rbac;
-```
-
----
-
-## 🚀 Progress & Fitur Aplikasi Saat Ini
-
-Aplikasi TERANG telah dilengkapi dengan fitur-fitur utama yang siap digunakan secara penuh (*fully functional*):
-
-| Modul / Halaman | Status Progress | Deskripsi & Kapabilitas Utama |
-| :--- | :---: | :--- |
-| **🏠 Beranda (Landing View)** | `100% Selesai` | Banner visual interaktif, KPI statistik APBD real-time, ringkasan proyek deviasi tinggi, dan peta skor transparansi daerah. |
-| **🗺️ Dashboard Transparansi & GIS** | `100% Selesai` | Peta Leaflet interaktif 33 Kab/Kota Sumut, skor transparansi wilayah, visualisasi serapan anggaran, dan filter sektoral. |
-| **🏗️ Katalog Proyek Publik** | `100% Selesai` | Katalog proyek infrastruktur, grafik deviasi fisik vs realisasi anggaran, pencarian proyek, dan pengaduan proyek spesifik. |
-| **📝 Formulir Laporan Aduan Faktual** | `100% Selesai` | Pengaduan warga faktual dengan auto-tagging koordinat GPS, lampiran bukti foto, serta opsi mode anonim / bernama. |
-| **🔍 Pelacakan Aduan Real-Time** | `100% Selesai` | Pencarian status aduan real-time menggunakan Kode Pelacakan unik (`TRG-2026-XXXXXX`) dengan timeline transparan. |
-| **📋 Daftar Laporan Publik** | `100% Selesai` | Etalase transparansi laporan warga yang lolos verifikasi beserta catatan tindak lanjut Inspektorat dan Dinas terkait. |
-| **📊 Insight & Analisis AI** | `100% Selesai` | Analisis prediktif deviasi anggaran, identifikasi potensi kemacetan proyek, serta rekomendasi optimasi alokasi APBD. |
-| **📖 Data & Metodologi** | `100% Selesai` | Dokumentasi terbuka rumus kalkulasi Serapan Anggaran, Gap Indicator, dan Skor Akuntabilitas Publik. |
-| **🛡️ Panel Pengelola & Moderasi** | `100% Selesai` | Panel kontrol *Role-Based Access Control (RBAC)* untuk **Super Admin**, **Verifikator Inspektorat**, dan **Instansi Dinas PUPR**. |
-| **⚡ Agen Pengawasan Otonom** | `100% Selesai` | Mesin pengawasan otonom *SuperAgent AI* 1-klik untuk pemindaian 33 Kab/Kota, auto-triage urgensi aduan, dan auto-dispatch nota dinas. |
-| **💬 Pusat Informasi Tanya TERANG** | `100% Selesai` | Chatbot asisten AI interaktif untuk konsultasi anggaran APBD dan informasi status aduan warga. |
-
----
-
-## 💻 Tech Stack & Teknologi
-
-* **Frontend Framework**: [React 18](https://react.dev/) dengan [TypeScript 5.5](https://www.typescriptlang.org/)
-* **Build Tool & Bundler**: [Vite 5.4](https://vitejs.dev/) & [Bun](https://bun.sh/)
-* **Styling & UI**: [Tailwind CSS 3.4](https://tailwindcss.com/), Lucide React Icons, & Animation Keyframes
-* **Interactive Mapping (GIS)**: [Leaflet GIS](https://leafletjs.com/) & GeoJSON Sumatera Utara (33 Kabupaten/Kota)
-* **Backend Server**: [Express.js](https://expressjs.com/) & Node.js ESM Runtime
-* **Artificial Intelligence**: Google Gemini AI (`@google/genai`) & SuperAgent Auto-Pilot Rule Engine
-* **Open Data Integration**: BMKG Open Data (Gempabumi & Cuaca), Open-Meteo API, & USGS FDSN Service
-
----
-
-## 🛠️ Cara Menjalankan Project (Panduan Lokal)
-
-### Persyaratan Sistem
-* **Node.js**: v20.19+ atau v22.12+
-* **Package Manager**: `npm` atau `bun`
-
-### Langkah-Langkah Instalasi:
+Persyaratan: Node.js 20.19+ atau 22.12+.
 
 ```bash
-# 1. Clone repositori ke komputer lokal Anda
-git clone https://github.com/s1informatika11s25007-maker/terang_akuntabilitas_publik.git
-
-# 2. Masuk ke direktori proyek
-cd terang_akuntabilitas_publik
-
-# 3. Install seluruh dependensi proyek
 npm install
-
-# 4. Salin file environment contoh ke .env.local
 cp .env.example .env.local
-
-# 5. Jalankan server pengembangan (Development Mode)
+# Isi GEMINI_API_KEY, AUTH_SECRET, dan DEMO_PASSWORD pada .env.local
 npm run dev
 ```
 
-Buka peramban Anda di alamat:  
-👉 **`http://localhost:5173`** (atau port yang diberikan oleh Vite)
+Buka alamat lokal yang ditampilkan oleh Vite/Express. Navigasi dan komponen visual di halaman utama menggunakan transisi ringan serta animasi saat bagian halaman masuk ke area pandang; preferensi `prefers-reduced-motion` tetap dihormati. Jalankan `npm run lint` untuk pemeriksaan tipe TypeScript dan `npm test` untuk pengujian logika inti. Untuk mode produksi jalankan `npm run build`, kemudian `npm run start:prod`.
 
----
+## Konfigurasi
 
-## 🔑 Akun Demo & Hak Akses Pengelola
+- `GEMINI_API_KEY`: API key Gemini untuk layanan asisten. Aplikasi tetap menyediakan fallback berbasis aturan bila kunci tidak dikonfigurasi.
+- `GEMINI_MODEL_NAME`: nama model Gemini (opsional, default `gemini-3.8-flash`).
+- `AUTH_SECRET`: rahasia acak panjang untuk menandatangani sesi pengelola. Gunakan nilai yang stabil dan rahasia di deployment.
+- `DEMO_PASSWORD`: kata sandi untuk akun demo super admin, verifikator, dan instansi. Ganti sebelum aplikasi dibuka ke publik.
+- `APP_URL`: alamat deployment aplikasi bila dibutuhkan integrasi hosting.
 
-Gunakan akun demo berikut untuk menguji fitur moderasi berbasis peran (*Role-Based Access Control*):
+## SuperAgent & data langsung
 
-| Role / Peran | Email Sesi Demo | Kata Sandi Demo | Hak Akses & Fitur Khusus |
-| :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin@terang.test` | *(Sesuai `DEMO_PASSWORD` di `.env`)* | Full Akses: Moderasi Aduan, Tanggapan Instansi, Impor CSV Data APBD & Proyek, serta Audit Trail Logs. |
-| **Verifikator Inspektorat** | `verifikator@terang.test` | *(Sesuai `DEMO_PASSWORD` di `.env`)* | Khusus Verifikasi Faktual Aduan Warga, penentuan tingkat urgensi, dan penolakan ber-alasan rasional. |
-| **Instansi Dinas PUPR** | `instansi@terang.test` | *(Sesuai `DEMO_PASSWORD` di `.env`)* | Khusus Penerbitan Tanggapan Resmi Instansi dan pembaruan status tindak lanjut proyek di timeline publik. |
+Buka menu **SuperAgent** lalu klik **Jalankan SuperAgent**. Seluruh alur berjalan dan progresnya tampil per langkah.
 
-> [!NOTE]
-> Kata sandi default untuk semua akun demo didefinisikan pada variabel `DEMO_PASSWORD` dalam berkas `.env` (default: `password`).
+API gratis yang dipakai (tanpa API key): Open-Meteo, BMKG Open Data (`data.bmkg.go.id`), dan USGS FDSN. Server membutuhkan akses internet keluar; bila gagal, langkah terkait ditandai Offline dan agen tetap lanjut.
 
----
+Variabel tambahan: `SUPERAGENT_AUTOPILOT_DEFAULT`, `SUPERAGENT_SCAN_INTERVAL_MS` (minimal 60000), `AGENT_PUBLIC_RUN` (setel `false` untuk produksi agar hanya pengelola yang dapat menjalankan agen).
 
-## 📁 Struktur Folder Proyek (100% Presisi)
+> **Prinsip Pengawasan:** **AI membantu, keputusan akhir oleh manusia.** Keputusan dan rekomendasi agen berupa penyaringan berbasis aturan transparan (ambang hujan 150 mm/14 hari, gempa M4+ radius 100 km, gerbang keyakinan triase 60%), bukan putusan hukum maupun pengganti verifikasi resmi inspektorat.
 
-<details>
-<summary>📂 <strong>Klik di sini untuk melihat struktur pohon folder lengkap</strong></summary>
+## Status & Checklist Jujur
 
-```text
-terang_akuntabilitas_publik/
-├── .env.example                # Templat konfigurasi variabel lingkungan
-├── .gitignore                  # Konfigurasi pengabaian Git
-├── CHANGELOG.md                # Catatan riwayat pembaruan versi
-├── README.md                   # Dokumentasi utama proyek
-├── bun.lock                    # Lockfile dependensi Bun
-├── index.html                  # Dokumen HTML utama Vite
-├── metadata.json               # Metadata proyek
-├── package-lock.json           # Lockfile dependensi npm
-├── package.json                # Dependensi dan skrip proyek
-├── server.ts                   # Entry point server Express.js & API backend
-├── tsconfig.json               # Konfigurasi TypeScript
-├── vite.config.ts              # Konfigurasi build Vite
-├── database/
-│   └── data/
-│       ├── README-data.md      # Dokumentasi dataset terbuka
-│       ├── apbd_realisasi.csv  # Dataset APBD & Realisasi 33 Kab/Kota
-│       ├── kabkota_sumut.geojson # Data spasial batas wilayah Sumut
-│       └── proyek_publik.csv   # Dataset katalog proyek infrastruktur
-├── docs/
-│   ├── erd.md                  # Dokumentasi Diagram Relasi Entitas
-│   ├── features.md             # Rincian fitur aplikasi
-│   └── sitemap.md              # Peta situs dan struktur navigasi
-├── public/
-│   └── terang_hero_banner_1792932754839.jpg # Banner publik
-├── scripts/
-│   ├── generate_csv.ts         # Skrip pembangkit dataset sintetik
-│   └── import.ts               # Skrip pengimpor data CSV
-└── src/
-    ├── App.tsx                 # Komponen utama & Route Guard terpusat
-    ├── global.d.ts             # Deklarasi tipe global
-    ├── index.css               # Styling global Tailwind CSS & animasi
-    ├── main.tsx                # Entry point React DOM
-    ├── assets/
-    │   └── images/
-    │       └── terang_hero_banner_1792932754839.jpg
-    ├── components/
-    │   ├── AuthModal.tsx       # Modal login akun pengelola (demo role)
-    │   ├── Footer.tsx          # Komponen footer navigasi & hak cipta
-    │   ├── LeafletMap.tsx      # Komponen Peta GIS interaktif Leaflet
-    │   ├── Navbar.tsx          # Navigasi utama dinamis berbasis role
-    │   ├── PageHero.tsx        # Header visual halaman
-    │   ├── PageMotion.tsx      # Pembungkus animasi transisi halaman
-    │   └── TanyaTerangModal.tsx # Modal Asisten AI Tanya TERANG
-    ├── data/
-    │   ├── budgetsData.ts      # Data anggaran & realisasi
-    │   ├── geoJsonSumut.ts     # Peta spasial GeoJSON Sumut
-    │   ├── projectsData.ts     # Data proyek infrastruktur publik
-    │   ├── regionsData.ts      # Master data 33 Kabupaten/Kota
-    │   ├── reportsData.ts      # Data laporan & aduan warga
-    │   └── sectorsData.ts      # Master data sektor APBD
-    ├── lib/
-    │   ├── calculations.ts     # Fungsi kalkulasi skor transparansi & deviasi
-    │   └── calculations.test.ts # Unit testing kalkulasi matematika
-    ├── server/
-    │   ├── aiService.ts        # Layanan integrasi Google Gemini AI
-    │   ├── db.ts               # In-memory database store & audit logs
-    │   ├── liveData.ts         # Integrasi BMKG, Open-Meteo, & USGS
-    │   ├── loadEnv.ts          # Pengisi variabel lingkungan server
-    │   └── superAgent.ts       # Mesin otonom SuperAgent AI
-    └── views/
-        ├── AboutView.tsx        # Halaman tentang platform TERANG
-        ├── AdminView.tsx        # Panel kendali & moderasi terpadu
-        ├── AgentAutomationView.tsx # Tampilan eksekusi SuperAgent AI
-        ├── DashboardView.tsx    # Dashboard GIS & Skor Akuntabilitas
-        ├── DataMethodologyView.tsx # Metodologi kalkulasi data
-        ├── InsightView.tsx      # Analisis risiko & prediksi AI
-        ├── LandingView.tsx      # Beranda utama platform
-        ├── ProjectsView.tsx     # Katalog proyek & deviasi fisik/keuangan
-        ├── PublicReportsView.tsx # Etalase laporan warga terverifikasi
-        ├── ReportFormView.tsx   # Formulir pengaduan warga faktual
-        └── TrackReportView.tsx  # Pelacakan status aduan real-time
-```
-</details>
+- [x] Dashboard APBD, peta choropleth Leaflet offline-ready, dan katalog proyek publik 33 kab/kota Sumut (data simulasi prototipe)
+- [x] Pelaporan warga dengan unggah & kompresi foto bukti di browser serta pelacakan kode `TRG-2026-XXXXXX`
+- [x] State machine transisi status laporan terverifikasi dan panel moderasi berbasis peran (`super_admin`, `verifikator`, `instansi`)
+- [x] Chatbot **Tanya TERANG** dan **SuperAgent** dengan integrasi cuaca/gempa langsung dan mode fallback offline
+- [x] Persistensi state laporan, dukungan, dan log aktivitas ke `data/state.json` serta endpoint reset demo (`POST /api/admin/reset-demo`)
+- [ ] Integrasi langsung dengan API/dump resmi Kemenkeu DJPK, BPS, atau LPSE (saat ini memakai data simulasi sintetis; lihat `database/data/README-data.md` untuk impor CSV)
+- [ ] Migrasi penyimpanan dari berkas JSON/in-memory ke basis data relasional (PostgreSQL/MySQL) dan rate limiter terdistribusi (Redis) untuk deployment publik skala besar
 
----
+## Akun demo
 
-## ⚡ Fitur Utama SuperAgent AI (Agen Otonom 1-Klik)
+- `admin@terang.test` — super admin
+- `verifikator@terang.test` — verifikator
+- `instansi@terang.test` — akun instansi
 
-Proyek ini dilengkapi **SuperAgent AI**, sebuah agen pengawasan otonom yang dapat mengeksekusi alur kerja pengawasan secara otomatis tanpa delay manual:
+Ketiganya memakai nilai `DEMO_PASSWORD` yang sama dari konfigurasi server. Ganti nilainya sebelum deployment publik.
 
-1. **Pemindaian Otonom 33 Kab/Kota**: Memindai seluruh paket proyek aktif dan mendeteksi deviasi fisik $\ge 25\%$.
-2. **Auto-Triase Urgensi Aduan**: Menganalisis teks laporan warga dan menetapkan skala urgensi (Skala 1-5).
-3. **Auto-Dispatch Nota Dinas**: Menerbitkan draf rekomendasi tindak lanjut secara otomatis ke Inspektorat dan Dinas terkait.
-4. **Monitoring Faktor Bencana Alam**: Mengintegrasikan API langsung BMKG (Gempabumi M4+) dan Open-Meteo (Curah hujan ekstrim $>150\text{ mm}/14\text{ hari}$) untuk mengevaluasi klaim *force majeure*.
+## Pengamanan yang diterapkan
 
----
+- Endpoint pengelolaan membutuhkan Bearer token bertanda tangan dengan masa berlaku 8 jam.
+- Izin peran diterapkan di server: impor CSV dan reset data demo hanya untuk super admin; verifikasi untuk super admin/verifikator; tanggapan resmi untuk super admin/instansi.
+- Identitas audit diambil dari sesi terverifikasi, bukan dari nilai `userEmail` yang dikirim browser.
+- Endpoint publik menyamarkan nama dan tidak mengirim nomor kontak pelapor.
+- Endpoint AI dan login memiliki pembatasan permintaan sederhana per alamat IP.
+- Header keamanan dasar, validasi panjang input, validasi transisi status (HTTP 409 bila tidak sah), dan validasi referensi wilayah/sektor/proyek diterapkan.
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andrelugmes/andrelugmes/master/assets/line.gif" width="100%" alt="Animated Line Divider" />
+## Catatan sebelum produksi
 
-  <p>Diterbitkan di bawah lisensi <strong>Apache License 2.0</strong>. Hak Cipta © 2026 Tim TERANG Akuntabilitas Publik Sumatera Utara.</p>
-</div>
+Proyek ini merupakan prototipe dengan dataset APBD/proyek simulasi dan penyimpanan JSON sederhana (`data/state.json`) untuk demonstrasi. Sebelum digunakan sebagai layanan publik resmi, ganti dataset dengan data terverifikasi via `scripts/import.ts`, pindahkan penyimpanan ke PostgreSQL/MySQL, gunakan HTTPS, simpan rahasia hanya di environment deployment, aktifkan backup, logging terpusat, dan gunakan rate limiter terdistribusi (misalnya Redis) bila menjalankan beberapa instance.

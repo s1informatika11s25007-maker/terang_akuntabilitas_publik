@@ -36,7 +36,12 @@ export const LandingView: React.FC<LandingViewProps> = ({
       <section className="landing-hero relative overflow-hidden bg-slate-900 text-white rounded-3xl p-6 sm:p-12 shadow-sm">
         <div className="max-w-7xl mx-auto landing-hero-inner">
           <div className="landing-hero-copy">
-            <div className="landing-eyebrow text-[#0FA3B1]"><span className="landing-live-dot" /> PLATFORM AKUNTABILITAS · SUMATERA UTARA</div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="landing-eyebrow text-[#0FA3B1]"><span className="landing-live-dot" /> PLATFORM AKUNTABILITAS · SUMATERA UTARA</div>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                Data simulasi (prototipe)
+              </span>
+            </div>
             <h1 className="text-3xl sm:text-5xl font-bold font-display text-white mt-2 leading-tight">Anggaran publik.<br /><span className="text-[#0FA3B1]">Diawasi satu klik.</span></h1>
             <p className="landing-lead text-slate-300 text-sm sm:text-base mt-4 leading-relaxed max-w-xl">
               Platform terpadu yang memantau APBD 33 kabupaten/kota, mendeteksi proyek yang tertinggal dengan konteks cuaca dan gempa nyata, serta memproses laporan warga secara otomatis dengan pengawasan manusia untuk kasus yang meragukan.
@@ -50,7 +55,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
               </button>
             </div>
             <div className="landing-trust-row mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center gap-4 text-xs text-slate-400">
-              <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5 text-teal-400" /> Data Resmi Terbuka</span>
+              <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5 text-teal-400" /> Data Terbuka &amp; Simulasi Prototipe</span>
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Privasi Pelapor Terjamin</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400" /> Data Cuaca &amp; Gempa Langsung</span>
             </div>
