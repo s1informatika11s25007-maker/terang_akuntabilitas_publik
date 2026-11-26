@@ -25,6 +25,7 @@ import {
   User,
   AlertCircle,
   CheckCircle,
+  Key,
 } from "lucide-react";
 
 interface LandingViewProps {
@@ -112,7 +113,7 @@ const SLIDE_MOTIONS = [
     transition: { duration: 0.76, ease: [0.22, 1, 0.36, 1] as const },
     style: { transformPerspective: 1400, transformOrigin: "center center" },
   },
-  // Slide 6: Inset Rounded Rect Reveal for Form Slide
+  // Slide 6: Inset Rounded Rect Reveal for Full-Screen Split Layout
   {
     initial: { opacity: 0, clipPath: "inset(48% 0% 48% 0% round 28px)", scale: 1.04 },
     animate: { opacity: 1, clipPath: "inset(0% 0% 0% 0% round 0px)", scale: 1 },
@@ -751,249 +752,293 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN REAL (INTERAKTIF 1 SLIDE) */}
+            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN FULL-SCREEN ASYMMETRICAL SPLIT LAYOUT */}
             {/* ============================================================ */}
             {activeSlide === 6 && (
-              <div className="max-w-2xl w-full space-y-5 text-center">
-                <div className="space-y-1.5">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
-                    AUTENTIKASI &amp; AKSES AKUN REAL
-                  </span>
-                  <h2 className="text-2xl sm:text-4xl font-extrabold font-display text-slate-900">
-                    Masuk &amp; Daftar Akun TERANG
-                  </h2>
-                  <p className="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto">
-                    Silakan masuk dengan akun Anda atau buat akun baru untuk pelaporan publik &amp; panel pengawasan.
-                  </p>
-                </div>
+              <div className="w-full max-w-6xl h-full max-h-[580px] flex flex-col lg:flex-row items-stretch justify-between gap-6 my-auto">
+                {/* LEFT SIDE: UNIK & BERBEDA (SHOWCASE PORTAL AKUNTABILITAS) */}
+                <div className="lg:w-7/12 bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] text-white p-7 sm:p-9 rounded-3xl border border-slate-800 shadow-2xl flex flex-col justify-between relative overflow-hidden text-left">
+                  <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Main Card Container for Form */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-5 sm:p-6 text-left space-y-4">
-                  {/* Tab Switcher: Masuk vs Daftar */}
-                  <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold">
-                    <button
-                      onClick={() => {
-                        setAuthTab("login");
-                        setAuthError(null);
-                        setAuthSuccess(null);
-                      }}
-                      className={`py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                        authTab === "login"
-                          ? "bg-[#0B7C8A] text-white shadow-sm"
-                          : "text-slate-600 hover:text-slate-900"
-                      }`}
-                    >
-                      <UserCheck className="w-4 h-4" /> Masuk Akun
-                    </button>
+                  <div className="space-y-4 relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold bg-teal-500/15 text-teal-300 border border-teal-500/30">
+                      <ShieldCheck className="w-3.5 h-3.5 text-teal-300" />
+                      PORTAL AUTENTIKASI TERPADU
+                    </div>
 
-                    <button
-                      onClick={() => {
-                        setAuthTab("register");
-                        setAuthError(null);
-                        setAuthSuccess(null);
-                      }}
-                      className={`py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                        authTab === "register"
-                          ? "bg-[#0B7C8A] text-white shadow-sm"
-                          : "text-slate-600 hover:text-slate-900"
-                      }`}
-                    >
-                      <UserPlus className="w-4 h-4" /> Daftar Akun Baru
-                    </button>
+                    <h2 className="text-2xl sm:text-4xl font-extrabold font-display leading-tight text-white">
+                      Satu Akun untuk Pengawasan APBD Sumatera Utara.
+                    </h2>
+
+                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                      Bergabunglah bersama masyarakat, verifikator inspektorat, dan instansi dinas untuk mengawal transparansi &amp; akuntabilitas anggaran publik di 33 Kabupaten/Kota.
+                    </p>
+
+                    <div className="pt-2 space-y-2.5 text-xs text-slate-300">
+                      <div className="flex items-start gap-2.5">
+                        <span className="p-1 rounded-md bg-teal-500/20 text-teal-300 font-bold">✓</span>
+                        <div>
+                          <strong className="text-white block font-bold">Privasi Pelapor Terjamin</strong>
+                          <span className="text-slate-400 text-[11px]">Setiap aduan fisik dilengkapi enkripsi data pelapor &amp; opsi anonim.</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <span className="p-1 rounded-md bg-teal-500/20 text-teal-300 font-bold">✓</span>
+                        <div>
+                          <strong className="text-white block font-bold">Otomasi Triase AI SuperAgent</strong>:
+                          <span className="text-slate-400 text-[11px]"> Pemindaian deviasi proyek &amp; rekomendasi nota dinas otonom.</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <span className="p-1 rounded-md bg-teal-500/20 text-teal-300 font-bold">✓</span>
+                        <div>
+                          <strong className="text-white block font-bold">Moderasi Bertingkat RBAC</strong>
+                          <span className="text-slate-400 text-[11px]">Akses khusus Super Admin, Verifikator, &amp; Instansi Dinas.</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Feedback Status Alerts */}
-                  {authError && (
-                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0" />
-                      <span>{authError}</span>
+                  {/* Summary Metric Footer inside Left Side */}
+                  <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400 relative z-10 mt-4">
+                    <span>52 Aduan Faktual</span>
+                    <span>•</span>
+                    <span>156 Paket Proyek</span>
+                    <span>•</span>
+                    <span className="text-teal-400 font-bold">33 Kab/Kota Sumut</span>
+                  </div>
+                </div>
+
+                {/* RIGHT SIDE: INTERACTIVE FORM CONTAINER (MASUK / DAFTAR AKUN) */}
+                <div className="lg:w-5/12 bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 flex flex-col justify-between text-left space-y-4">
+                  <div>
+                    {/* Header & Tab Switcher */}
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                      <span className="text-xs font-extrabold text-slate-900 font-display">
+                        {authTab === "login" ? "🔑 Masuk Akun" : "📝 Daftar Akun Baru"}
+                      </span>
+
+                      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[11px] font-bold">
+                        <button
+                          onClick={() => {
+                            setAuthTab("login");
+                            setAuthError(null);
+                            setAuthSuccess(null);
+                          }}
+                          className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                            authTab === "login"
+                              ? "bg-[#0B7C8A] text-white shadow-xs font-bold"
+                              : "text-slate-600 hover:text-slate-900"
+                          }`}
+                        >
+                          Masuk
+                        </button>
+                        <button
+                          onClick={() => {
+                            setAuthTab("register");
+                            setAuthError(null);
+                            setAuthSuccess(null);
+                          }}
+                          className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                            authTab === "register"
+                              ? "bg-[#0B7C8A] text-white shadow-xs font-bold"
+                              : "text-slate-600 hover:text-slate-900"
+                          }`}
+                        >
+                          Daftar
+                        </button>
+                      </div>
                     </div>
-                  )}
 
-                  {authSuccess && (
-                    <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center gap-2 font-semibold">
-                      <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
-                      <span>{authSuccess}</span>
-                    </div>
-                  )}
-
-                  {/* FORM LOGIN */}
-                  {authTab === "login" && (
-                    <form onSubmit={(e) => handleSlideLogin(e)} className="space-y-3 text-xs">
-                      <div className="space-y-1">
-                        <label className="font-bold text-slate-700 block">Alamat Email</label>
-                        <div className="relative">
-                          <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                          <input
-                            type="email"
-                            required
-                            value={loginEmail}
-                            onChange={(e) => setLoginEmail(e.target.value)}
-                            placeholder="nama@email.com"
-                            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
-                          />
-                        </div>
+                    {/* Status Alerts */}
+                    {authError && (
+                      <div className="mb-3 p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-[11px] flex items-center gap-2 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{authError}</span>
                       </div>
+                    )}
 
-                      <div className="space-y-1">
-                        <label className="font-bold text-slate-700 block">Kata Sandi</label>
-                        <div className="relative">
-                          <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                          <input
-                            type="password"
-                            required
-                            value={loginPassword}
-                            onChange={(e) => setLoginPassword(e.target.value)}
-                            placeholder="Masukkan kata sandi"
-                            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
-                          />
-                        </div>
+                    {authSuccess && (
+                      <div className="mb-3 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-[11px] flex items-center gap-2 font-semibold">
+                        <CheckCircle className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                        <span>{authSuccess}</span>
                       </div>
+                    )}
 
-                      <button
-                        type="submit"
-                        disabled={authLoading}
-                        className="w-full py-3 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
-                      >
-                        {authLoading ? "Sedang Memproses..." : "Masuk Akun TERANG →"}
-                      </button>
-
-                      {/* Quick Demo Fill Buttons */}
-                      <div className="pt-3 border-t border-slate-200 space-y-2">
-                        <span className="text-[11px] font-bold text-slate-500 block">
-                          Atau Isi Instan dengan Akun Demo:
-                        </span>
-                        <div className="grid grid-cols-3 gap-2">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              setLoginEmail("admin@terang.test");
-                              setLoginPassword("password");
-                              handleSlideLogin(e, "admin@terang.test");
-                            }}
-                            className="p-2 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
-                          >
-                            Super Admin
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              setLoginEmail("verifikator@terang.test");
-                              setLoginPassword("password");
-                              handleSlideLogin(e, "verifikator@terang.test");
-                            }}
-                            className="p-2 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
-                          >
-                            Verifikator
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              setLoginEmail("instansi@terang.test");
-                              setLoginPassword("password");
-                              handleSlideLogin(e, "instansi@terang.test");
-                            }}
-                            className="p-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
-                          >
-                            Instansi PUPR
-                          </button>
-                        </div>
-                      </div>
-                    </form>
-                  )}
-
-                  {/* FORM REGISTER */}
-                  {authTab === "register" && (
-                    <form onSubmit={handleSlideRegister} className="space-y-3 text-xs">
-                      <div className="grid grid-cols-2 gap-3">
+                    {/* FORM MASUK AKUN (LOGIN) */}
+                    {authTab === "login" && (
+                      <form onSubmit={(e) => handleSlideLogin(e)} className="space-y-3 text-xs">
                         <div className="space-y-1">
-                          <label className="font-bold text-slate-700 block">Nama Lengkap</label>
+                          <label className="font-bold text-slate-700 block text-[11px]">Alamat Email</label>
                           <div className="relative">
-                            <User className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                            <Mail className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+                            <input
+                              type="email"
+                              required
+                              value={loginEmail}
+                              onChange={(e) => setLoginEmail(e.target.value)}
+                              placeholder="nama@email.com"
+                              className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="font-bold text-slate-700 block text-[11px]">Kata Sandi</label>
+                          <div className="relative">
+                            <Lock className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+                            <input
+                              type="password"
+                              required
+                              value={loginPassword}
+                              onChange={(e) => setLoginPassword(e.target.value)}
+                              placeholder="Masukkan kata sandi"
+                              className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={authLoading}
+                          className="w-full py-2.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-1"
+                        >
+                          {authLoading ? "Memproses..." : "Masuk Akun TERANG →"}
+                        </button>
+                      </form>
+                    )}
+
+                    {/* FORM DAFTAR AKUN BARU (REGISTER) */}
+                    {authTab === "register" && (
+                      <form onSubmit={handleSlideRegister} className="space-y-2.5 text-xs">
+                        <div className="space-y-1">
+                          <label className="font-bold text-slate-700 block text-[11px]">Nama Lengkap</label>
+                          <div className="relative">
+                            <User className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
                             <input
                               type="text"
                               required
                               value={regName}
                               onChange={(e) => setRegName(e.target.value)}
                               placeholder="Nama lengkap Anda"
-                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
                         </div>
 
-                        <div className="space-y-1">
-                          <label className="font-bold text-slate-700 block">Alamat Email</label>
-                          <div className="relative">
-                            <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <label className="font-bold text-slate-700 block text-[11px]">Email</label>
                             <input
                               type="email"
                               required
                               value={regEmail}
                               onChange={(e) => setRegEmail(e.target.value)}
                               placeholder="nama@email.com"
-                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              className="w-full px-2.5 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
-                        </div>
-                      </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <label className="font-bold text-slate-700 block">Kata Sandi</label>
-                          <div className="relative">
-                            <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                          <div className="space-y-1">
+                            <label className="font-bold text-slate-700 block text-[11px]">Kata Sandi</label>
                             <input
                               type="password"
                               required
                               minLength={4}
                               value={regPassword}
                               onChange={(e) => setRegPassword(e.target.value)}
-                              placeholder="Min. 4 karakter"
-                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              placeholder="Min 4 char"
+                              className="w-full px-2.5 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
                         </div>
 
-                        <div className="space-y-1">
-                          <label className="font-bold text-slate-700 block">Peran Pengguna</label>
-                          <select
-                            value={regRole}
-                            onChange={(e) => setRegRole(e.target.value as any)}
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
-                          >
-                            <option value="warga">Pelapor Warga Publik</option>
-                            <option value="verifikator">Verifikator Inspektorat</option>
-                            <option value="instansi">Instansi Dinas Terkait</option>
-                          </select>
-                        </div>
-                      </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <label className="font-bold text-slate-700 block text-[11px]">Peran Pengguna</label>
+                            <select
+                              value={regRole}
+                              onChange={(e) => setRegRole(e.target.value as any)}
+                              className="w-full px-2 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                            >
+                              <option value="warga">Pelapor Warga</option>
+                              <option value="verifikator">Verifikator</option>
+                              <option value="instansi">Instansi Dinas</option>
+                            </select>
+                          </div>
 
-                      <div className="space-y-1">
-                        <label className="font-bold text-slate-700 block">Kabupaten / Kota Sumut</label>
-                        <select
-                          value={regRegionId}
-                          onChange={(e) => setRegRegionId(e.target.value)}
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                          <div className="space-y-1">
+                            <label className="font-bold text-slate-700 block text-[11px]">Kabupaten/Kota</label>
+                            <select
+                              value={regRegionId}
+                              onChange={(e) => setRegRegionId(e.target.value)}
+                              className="w-full px-2 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                            >
+                              {REGIONS.map((reg) => (
+                                <option key={reg.id} value={reg.id}>
+                                  {reg.nama}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={authLoading}
+                          className="w-full py-2.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-1"
                         >
-                          {REGIONS.map((reg) => (
-                            <option key={reg.id} value={reg.id}>
-                              {reg.nama} ({reg.tipe})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                          {authLoading ? "Mendaftar..." : "Daftar & Masuk Akun →"}
+                        </button>
+                      </form>
+                    )}
+                  </div>
+
+                  {/* Quick Demo Shortcuts at Bottom of Right Side */}
+                  <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
+                      Quick Fill Akun Demo:
+                    </span>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          setLoginEmail("admin@terang.test");
+                          setLoginPassword("password");
+                          handleSlideLogin(e, "admin@terang.test");
+                        }}
+                        className="py-1.5 px-1 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                      >
+                        Super Admin
+                      </button>
 
                       <button
-                        type="submit"
-                        disabled={authLoading}
-                        className="w-full py-3 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
+                        type="button"
+                        onClick={(e) => {
+                          setLoginEmail("verifikator@terang.test");
+                          setLoginPassword("password");
+                          handleSlideLogin(e, "verifikator@terang.test");
+                        }}
+                        className="py-1.5 px-1 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
                       >
-                        {authLoading ? "Sedang Mendaftar..." : "Daftar & Masuk Akun TERANG →"}
+                        Verifikator
                       </button>
-                    </form>
-                  )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          setLoginEmail("instansi@terang.test");
+                          setLoginPassword("password");
+                          handleSlideLogin(e, "instansi@terang.test");
+                        }}
+                        className="py-1.5 px-1 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                      >
+                        Instansi PUPR
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
