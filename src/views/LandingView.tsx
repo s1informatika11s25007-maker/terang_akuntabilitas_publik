@@ -7,14 +7,11 @@ import {
   Building2,
   ShieldCheck,
   CheckCircle2,
-  Bot,
+  Cpu,
   Map,
   FileText,
   Users,
-  Sparkles,
-  Zap,
   Activity,
-  Layers,
   ChevronDown,
 } from "lucide-react";
 
@@ -34,7 +31,7 @@ const SLIDE_LABELS = [
   "Sambutan & Hero",
   "Mengapa TERANG",
   "Fitur Pengawasan",
-  "Arsitektur & AI",
+  "Arsitektur & Sistem",
   "Statistik Kinerja",
   "Mulai & Akses App",
 ];
@@ -307,7 +304,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     Mengapa TERANG Dibutuhkan?
                   </h2>
                   <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-                    Mengatasi deviasi pembangunan fisik vs keuangan melalui pemetaan berbasis data saintifik dan AI otonom.
+                    Mengatasi deviasi pembangunan fisik vs keuangan melalui pemetaan berbasis data saintifik dan sistem otonom.
                   </p>
                 </div>
 
@@ -332,18 +329,18 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
                   <div className="bg-gradient-to-br from-teal-950/60 to-slate-900 border border-teal-500/40 p-6 rounded-2xl space-y-4 hover:border-teal-400 transition-all">
                     <div className="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 font-bold">
-                      ✨
+                      <ShieldCheck className="w-6 h-6 text-teal-300" />
                     </div>
                     <h3 className="text-xl font-bold text-white font-display">Solusi Otonom TERANG</h3>
                     <ul className="space-y-2 text-xs text-teal-100">
                       <li className="flex items-start gap-2">
-                        <span className="text-teal-400 font-bold">•</span> **SuperAgent AI 1-Klik**: Otonom memindai deviasi &amp; membuat rekomendasi.
+                        <span className="text-teal-400 font-bold">•</span> <strong className="text-white font-bold">SuperAgent Otonom 1-Klik</strong>: Memindai deviasi &amp; membuat rekomendasi.
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-teal-400 font-bold">•</span> **Integrasi Sensor BMKG &amp; USGS**: Analisis konteks bencana &amp; cuaca otomatis.
+                        <span className="text-teal-400 font-bold">•</span> <strong className="text-white font-bold">Integrasi Sensor BMKG &amp; USGS</strong>: Analisis konteks bencana &amp; cuaca otomatis.
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-teal-400 font-bold">•</span> **Kompresi Foto Bukti &amp; State Machine**: Pelaporan warga aman &amp; terstruktur.
+                        <span className="text-teal-400 font-bold">•</span> <strong className="text-white font-bold">Kompresi Foto Bukti &amp; State Machine</strong>: Pelaporan warga aman &amp; terstruktur.
                       </li>
                     </ul>
                   </div>
@@ -374,10 +371,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
                       tag: "Peta Tematik",
                     },
                     {
-                      icon: Bot,
-                      title: "SuperAgent AI",
+                      icon: Cpu,
+                      title: "SuperAgent Otonom",
                       desc: "Pemindaian otonom 1-klik untuk deteksi keterlambatan &amp; nota dinas.",
-                      tag: "Gemini AI",
+                      tag: "Pengawasan Cerdas",
                     },
                     {
                       icon: FileText,
@@ -442,7 +439,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     <span className="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center text-xs font-bold font-mono">
                       02
                     </span>
-                    <h3 className="text-base font-bold text-white font-display">Engine SuperAgent AI</h3>
+                    <h3 className="text-base font-bold text-white font-display">Engine SuperAgent Otonom</h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
                       Evaluasi triase urgensi 1-5, pencocokan skor risiko deviasi, dan draf otomatis Nota Dinas rekomendasi.
                     </p>
@@ -533,7 +530,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     onClick={runAgent}
                     className="px-8 py-4 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-xl shadow-teal-950/60 transition-all hover:scale-105 cursor-pointer"
                   >
-                    <Zap className="w-4 h-4 text-amber-300" /> Jalankan Agen Otonom
+                    <Activity className="w-4 h-4 text-teal-300" /> Jalankan Agen Otonom
                   </button>
 
                   <button
