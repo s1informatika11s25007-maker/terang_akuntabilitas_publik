@@ -25,7 +25,6 @@ import {
   User,
   AlertCircle,
   CheckCircle,
-  Key,
 } from "lucide-react";
 
 interface LandingViewProps {
@@ -113,11 +112,11 @@ const SLIDE_MOTIONS = [
     transition: { duration: 0.76, ease: [0.22, 1, 0.36, 1] as const },
     style: { transformPerspective: 1400, transformOrigin: "center center" },
   },
-  // Slide 6: Inset Rounded Rect Reveal for Full-Screen Split Layout
+  // Slide 6: Full Bleed Inset Rect Reveal
   {
-    initial: { opacity: 0, clipPath: "inset(48% 0% 48% 0% round 28px)", scale: 1.04 },
+    initial: { opacity: 0, clipPath: "inset(48% 0% 48% 0% round 0px)", scale: 1.04 },
     animate: { opacity: 1, clipPath: "inset(0% 0% 0% 0% round 0px)", scale: 1 },
-    exit: { opacity: 0, clipPath: "inset(48% 0% 48% 0% round 28px)", scale: 0.98 },
+    exit: { opacity: 0, clipPath: "inset(48% 0% 48% 0% round 0px)", scale: 0.98 },
     transition: { duration: 0.8, ease: [0.7, 0, 0.2, 1] as const },
     style: { transformPerspective: 1400, transformOrigin: "center center" },
   },
@@ -338,7 +337,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
             exit={exitMotion}
             transition={prefersReducedMotion ? { duration: 0.01 } : currentMotion.transition}
             style={prefersReducedMotion ? {} : currentMotion.style}
-            className="w-full h-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-16"
+            className={`w-full h-full flex flex-col justify-center items-center ${
+              activeSlide === 6 ? "px-0" : "px-4 sm:px-8 lg:px-16"
+            }`}
           >
             {/* ============================================================ */}
             {/* SLIDE 0: HERO & WELCOME */}
@@ -752,58 +753,62 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN FULL-SCREEN ASYMMETRICAL SPLIT LAYOUT */}
+            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN FULL-BLEED SEAMLESS PAGE LAYOUT */}
             {/* ============================================================ */}
             {activeSlide === 6 && (
-              <div className="w-full max-w-6xl h-full max-h-[580px] flex flex-col lg:flex-row items-stretch justify-between gap-6 my-auto">
-                {/* LEFT SIDE: UNIK & BERBEDA (SHOWCASE PORTAL AKUNTABILITAS) */}
-                <div className="lg:w-7/12 bg-gradient-to-br from-slate-900 via-slate-900 to-[#0F172A] text-white p-7 sm:p-9 rounded-3xl border border-slate-800 shadow-2xl flex flex-col justify-between relative overflow-hidden text-left">
-                  <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="w-full h-full flex flex-col lg:flex-row items-stretch justify-between overflow-hidden">
+                {/* LEFT SIDE: SEAMLESS CIVIC REPORTING & TRANSPARENCY SHOWCASE (58% Width) */}
+                <div className="lg:w-7/12 bg-[#0F172A] text-white p-8 sm:p-12 lg:p-16 flex flex-col justify-between relative overflow-hidden text-left">
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-[#0FA3B1]/20 rounded-full blur-3xl pointer-events-none" />
 
-                  <div className="space-y-4 relative z-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold bg-teal-500/15 text-teal-300 border border-teal-500/30">
-                      <ShieldCheck className="w-3.5 h-3.5 text-teal-300" />
-                      PORTAL AUTENTIKASI TERPADU
+                  <div className="space-y-6 relative z-10 max-w-xl">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#0FA3B1]/20 text-teal-300 border border-teal-500/30">
+                      <ShieldCheck className="w-4 h-4 text-teal-300" />
+                      PORTAL ADUAN WARGA &amp; AKUNTABILITAS PUBLIK
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl font-extrabold font-display leading-tight text-white">
-                      Satu Akun untuk Pengawasan APBD Sumatera Utara.
+                    <h2 className="text-3xl sm:text-5xl font-extrabold font-display leading-tight text-white">
+                      Kawal Anggaran APBD.
+                      <br />
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] via-teal-300 to-amber-300">
+                        Laporkan Faktual di Lapangan.
+                      </span>
                     </h2>
 
-                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                      Bergabunglah bersama masyarakat, verifikator inspektorat, dan instansi dinas untuk mengawal transparansi &amp; akuntabilitas anggaran publik di 33 Kabupaten/Kota.
+                    <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                      Satu akun terpadu untuk warga Sumatera Utara, verifikator inspektorat, dan instansi dinas terkait. Kirim aduan fisik proyek publik secara transparan, aman, dan terpantau real-time.
                     </p>
 
-                    <div className="pt-2 space-y-2.5 text-xs text-slate-300">
-                      <div className="flex items-start gap-2.5">
-                        <span className="p-1 rounded-md bg-teal-500/20 text-teal-300 font-bold">✓</span>
+                    <div className="pt-2 space-y-3 text-xs sm:text-sm text-slate-300">
+                      <div className="flex items-start gap-3">
+                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-white block font-bold">Privasi Pelapor Terjamin</strong>
-                          <span className="text-slate-400 text-[11px]">Setiap aduan fisik dilengkapi enkripsi data pelapor &amp; opsi anonim.</span>
+                          <strong className="text-white block font-bold">Privasi Pelapor Faktual &amp; Enkripsi Data</strong>
+                          <span className="text-slate-400 text-xs">Identitas pelapor terenkripsi aman dan mendukung mode pelaporan anonim.</span>
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-2.5">
-                        <span className="p-1 rounded-md bg-teal-500/20 text-teal-300 font-bold">✓</span>
+                      <div className="flex items-start gap-3">
+                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-white block font-bold">Otomasi Triase AI SuperAgent</strong>:
-                          <span className="text-slate-400 text-[11px]"> Pemindaian deviasi proyek &amp; rekomendasi nota dinas otonom.</span>
+                          <strong className="text-white block font-bold">Kompresi Foto Fisik &amp; Kode Tracking TRG-2026</strong>
+                          <span className="text-slate-400 text-xs">Foto dikompres otomatis di HP/browser dan diberi nomor resi pantau publik.</span>
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-2.5">
-                        <span className="p-1 rounded-md bg-teal-500/20 text-teal-300 font-bold">✓</span>
+                      <div className="flex items-start gap-3">
+                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-white block font-bold">Moderasi Bertingkat RBAC</strong>
-                          <span className="text-slate-400 text-[11px]">Akses khusus Super Admin, Verifikator, &amp; Instansi Dinas.</span>
+                          <strong className="text-white block font-bold">Moderasi State Machine &amp; Respons Dinas</strong>
+                          <span className="text-slate-400 text-xs">Transisi status laporan diverifikasi secara akuntabel hingga tindak lanjut dinas.</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Summary Metric Footer inside Left Side */}
-                  <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400 relative z-10 mt-4">
-                    <span>52 Aduan Faktual</span>
+                  {/* Summary Footer on Left Side */}
+                  <div className="pt-6 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
+                    <span>52 Laporan Faktual</span>
                     <span>•</span>
                     <span>156 Paket Proyek</span>
                     <span>•</span>
@@ -811,91 +816,101 @@ export const LandingView: React.FC<LandingViewProps> = ({
                   </div>
                 </div>
 
-                {/* RIGHT SIDE: INTERACTIVE FORM CONTAINER (MASUK / DAFTAR AKUN) */}
-                <div className="lg:w-5/12 bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 flex flex-col justify-between text-left space-y-4">
-                  <div>
-                    {/* Header & Tab Switcher */}
-                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-                      <span className="text-xs font-extrabold text-slate-900 font-display">
-                        {authTab === "login" ? "🔑 Masuk Akun" : "📝 Daftar Akun Baru"}
+                {/* RIGHT SIDE: SEAMLESS FORM INTEGRATION (42% Width) */}
+                <div className="lg:w-5/12 bg-[#F8FAFC] p-8 sm:p-12 flex flex-col justify-between text-left space-y-5">
+                  <div className="max-w-md mx-auto w-full my-auto space-y-4">
+                    {/* Header Title inside Right Panel */}
+                    <div className="space-y-1">
+                      <span className="text-xs font-mono font-bold text-[#0FA3B1] uppercase tracking-wider block">
+                        {authTab === "login" ? "SESI MASUK AKUN" : "PENDAFTARAN WARGA PUBLIK"}
                       </span>
+                      <h3 className="text-2xl font-extrabold text-slate-900 font-display">
+                        {authTab === "login" ? "Masuk ke TERANG" : "Buat Akun Baru"}
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        {authTab === "login"
+                          ? "Masukkan email dan kata sandi Anda untuk mengakses portal."
+                          : "Lengkapi formulir pendaftaran untuk menyampaikan aduan warga."}
+                      </p>
+                    </div>
 
-                      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[11px] font-bold">
-                        <button
-                          onClick={() => {
-                            setAuthTab("login");
-                            setAuthError(null);
-                            setAuthSuccess(null);
-                          }}
-                          className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                            authTab === "login"
-                              ? "bg-[#0B7C8A] text-white shadow-xs font-bold"
-                              : "text-slate-600 hover:text-slate-900"
-                          }`}
-                        >
-                          Masuk
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAuthTab("register");
-                            setAuthError(null);
-                            setAuthSuccess(null);
-                          }}
-                          className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                            authTab === "register"
-                              ? "bg-[#0B7C8A] text-white shadow-xs font-bold"
-                              : "text-slate-600 hover:text-slate-900"
-                          }`}
-                        >
-                          Daftar
-                        </button>
-                      </div>
+                    {/* Tab Switcher */}
+                    <div className="grid grid-cols-2 gap-1.5 bg-slate-200/80 p-1.5 rounded-xl text-xs font-bold">
+                      <button
+                        onClick={() => {
+                          setAuthTab("login");
+                          setAuthError(null);
+                          setAuthSuccess(null);
+                        }}
+                        className={`py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                          authTab === "login"
+                            ? "bg-[#0B7C8A] text-white shadow-sm"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        <UserCheck className="w-4 h-4" /> Masuk Akun
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setAuthTab("register");
+                          setAuthError(null);
+                          setAuthSuccess(null);
+                        }}
+                        className={`py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                          authTab === "register"
+                            ? "bg-[#0B7C8A] text-white shadow-sm"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        <UserPlus className="w-4 h-4" /> Daftar Akun Baru
+                      </button>
                     </div>
 
                     {/* Status Alerts */}
                     {authError && (
-                      <div className="mb-3 p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-[11px] flex items-center gap-2 font-medium">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2 font-medium">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
                         <span>{authError}</span>
                       </div>
                     )}
 
                     {authSuccess && (
-                      <div className="mb-3 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-[11px] flex items-center gap-2 font-semibold">
-                        <CheckCircle className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                      <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center gap-2 font-semibold">
+                        <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
                         <span>{authSuccess}</span>
                       </div>
                     )}
 
                     {/* FORM MASUK AKUN (LOGIN) */}
                     {authTab === "login" && (
-                      <form onSubmit={(e) => handleSlideLogin(e)} className="space-y-3 text-xs">
+                      <form onSubmit={(e) => handleSlideLogin(e)} className="space-y-3.5 text-xs">
                         <div className="space-y-1">
-                          <label className="font-bold text-slate-700 block text-[11px]">Alamat Email</label>
+                          <label className="font-bold text-slate-700 block">Alamat Email</label>
                           <div className="relative">
-                            <Mail className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+                            <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
                             <input
                               type="email"
                               required
                               value={loginEmail}
                               onChange={(e) => setLoginEmail(e.target.value)}
                               placeholder="nama@email.com"
-                              className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
                             />
                           </div>
                         </div>
 
                         <div className="space-y-1">
-                          <label className="font-bold text-slate-700 block text-[11px]">Kata Sandi</label>
+                          <label className="font-bold text-slate-700 block">Kata Sandi</label>
                           <div className="relative">
-                            <Lock className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+                            <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
                             <input
                               type="password"
                               required
                               value={loginPassword}
                               onChange={(e) => setLoginPassword(e.target.value)}
                               placeholder="Masukkan kata sandi"
-                              className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
                             />
                           </div>
                         </div>
@@ -903,27 +918,71 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         <button
                           type="submit"
                           disabled={authLoading}
-                          className="w-full py-2.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-1"
+                          className="w-full py-3 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
                         >
                           {authLoading ? "Memproses..." : "Masuk Akun TERANG →"}
                         </button>
+
+                        {/* Quick Fill Demo Shortcuts */}
+                        <div className="pt-3 border-t border-slate-200 space-y-2">
+                          <span className="text-[11px] font-bold text-slate-500 block">
+                            Atau Isi Instan Akun Demo:
+                          </span>
+                          <div className="grid grid-cols-3 gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                setLoginEmail("admin@terang.test");
+                                setLoginPassword("password");
+                                handleSlideLogin(e, "admin@terang.test");
+                              }}
+                              className="p-2 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                            >
+                              Super Admin
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                setLoginEmail("verifikator@terang.test");
+                                setLoginPassword("password");
+                                handleSlideLogin(e, "verifikator@terang.test");
+                              }}
+                              className="p-2 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                            >
+                              Verifikator
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                setLoginEmail("instansi@terang.test");
+                                setLoginPassword("password");
+                                handleSlideLogin(e, "instansi@terang.test");
+                              }}
+                              className="p-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
+                            >
+                              Instansi PUPR
+                            </button>
+                          </div>
+                        </div>
                       </form>
                     )}
 
                     {/* FORM DAFTAR AKUN BARU (REGISTER) */}
                     {authTab === "register" && (
-                      <form onSubmit={handleSlideRegister} className="space-y-2.5 text-xs">
+                      <form onSubmit={handleSlideRegister} className="space-y-3 text-xs">
                         <div className="space-y-1">
                           <label className="font-bold text-slate-700 block text-[11px]">Nama Lengkap</label>
                           <div className="relative">
-                            <User className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+                            <User className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
                             <input
                               type="text"
                               required
                               value={regName}
                               onChange={(e) => setRegName(e.target.value)}
                               placeholder="Nama lengkap Anda"
-                              className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
                         </div>
@@ -937,7 +996,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={regEmail}
                               onChange={(e) => setRegEmail(e.target.value)}
                               placeholder="nama@email.com"
-                              className="w-full px-2.5 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-2.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
 
@@ -950,7 +1009,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={regPassword}
                               onChange={(e) => setRegPassword(e.target.value)}
                               placeholder="Min 4 char"
-                              className="w-full px-2.5 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-2.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
                         </div>
@@ -961,7 +1020,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                             <select
                               value={regRole}
                               onChange={(e) => setRegRole(e.target.value as any)}
-                              className="w-full px-2 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-2 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             >
                               <option value="warga">Pelapor Warga</option>
                               <option value="verifikator">Verifikator</option>
@@ -974,7 +1033,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                             <select
                               value={regRegionId}
                               onChange={(e) => setRegRegionId(e.target.value)}
-                              className="w-full px-2 py-2 rounded-xl border border-slate-300 bg-[#F8FAFC] text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-2 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             >
                               {REGIONS.map((reg) => (
                                 <option key={reg.id} value={reg.id}>
@@ -988,56 +1047,12 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         <button
                           type="submit"
                           disabled={authLoading}
-                          className="w-full py-2.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-1"
+                          className="w-full py-3 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
                         >
                           {authLoading ? "Mendaftar..." : "Daftar & Masuk Akun →"}
                         </button>
                       </form>
                     )}
-                  </div>
-
-                  {/* Quick Demo Shortcuts at Bottom of Right Side */}
-                  <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                    <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
-                      Quick Fill Akun Demo:
-                    </span>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          setLoginEmail("admin@terang.test");
-                          setLoginPassword("password");
-                          handleSlideLogin(e, "admin@terang.test");
-                        }}
-                        className="py-1.5 px-1 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
-                      >
-                        Super Admin
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          setLoginEmail("verifikator@terang.test");
-                          setLoginPassword("password");
-                          handleSlideLogin(e, "verifikator@terang.test");
-                        }}
-                        className="py-1.5 px-1 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
-                      >
-                        Verifikator
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          setLoginEmail("instansi@terang.test");
-                          setLoginPassword("password");
-                          handleSlideLogin(e, "instansi@terang.test");
-                        }}
-                        className="py-1.5 px-1 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-[10px] text-center cursor-pointer transition-colors"
-                      >
-                        Instansi PUPR
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
