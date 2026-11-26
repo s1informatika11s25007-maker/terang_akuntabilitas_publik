@@ -182,15 +182,17 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F3F6FA] text-slate-800 font-sans selection:bg-[#0FA3B1]/20 selection:text-[#0B2545]">
       <a href="#main-content" className="skip-link">Lewati ke konten utama</a>
-      {/* Top Bar Navigation */}
-      <Navbar
-        currentView={currentView}
-        onNavigate={handleNavigate}
-        currentUser={currentUser}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
-        onLogout={handleLogout}
-        onOpenTanyaTerang={() => setIsTanyaTerangOpen(true)}
-      />
+      {/* Top Bar Navigation (Hidden on Landing Page for Fullscreen Experience) */}
+      {currentView !== 'landing' && (
+        <Navbar
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          currentUser={currentUser}
+          onOpenAuth={() => setIsAuthModalOpen(true)}
+          onLogout={handleLogout}
+          onOpenTanyaTerang={() => setIsTanyaTerangOpen(true)}
+        />
+      )}
 
       {/* Main Content View Port */}
       <main id="main-content" className="flex-1 pb-12 sm:pb-6 page-main">
@@ -359,8 +361,8 @@ export default function App() {
         </button>
       </div>
 
-      {/* Footer */}
-      <Footer onNavigate={handleNavigate} />
+      {/* Footer (Hidden on Landing Page for Immersive Experience) */}
+      {currentView !== 'landing' && <Footer onNavigate={handleNavigate} />}
 
       {/* Interactive Modals */}
       <TanyaTerangModal

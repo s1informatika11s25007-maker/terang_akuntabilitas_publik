@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="100%" stop-color="#0FA3B1"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad)"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="14.5" stroke="url(#tealGrad)" stroke-opacity="0.4" stroke-width="1.5"/>
+
+  <!-- Beacon Rays -->
+  <path d="M32 6L32 10M32 44L32 48M11 27L15 27M49 27L53 27M17.15 12.15L19.98 14.98M44.02 39.02L46.85 41.85M17.15 41.85L19.98 39.02M44.02 14.98L46.85 12.15" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Central Lightbulb & Transparency Shield -->
+  <path d="M32 15C25.37 15 20 20.37 20 27C20 31.42 22.39 35.28 26 37.35V41C26 42.1 26.9 43 28 43H36C37.1 43 38 42.1 38 41V37.35C41.61 35.28 44 31.42 44 27C44 20.37 38.63 15 32 15Z" fill="url(#tealGrad)"/>
+  <path d="M28 46H36" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M30 49H34" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Inner Spark of Truth -->
+  <path d="M32 20L33.8 24.2L38 26L33.8 27.8L32 32L30.2 27.8L26 26L30.2 24.2L32 20Z" fill="url(#goldGrad)"/>
+</svg>
