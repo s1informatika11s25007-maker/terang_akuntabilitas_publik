@@ -381,18 +381,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     >
                       <UserPlus className="w-4 h-4" /> Daftar Akun Baru
                     </button>
-                    <button
-                      onClick={runAgent}
-                      className="px-5 py-3.5 bg-teal-50 hover:bg-teal-100 text-[#0B7C8A] border border-teal-200 font-bold rounded-xl text-sm flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
-                    >
-                      <Activity className="w-4 h-4" /> Agen Otonom
-                    </button>
-                    <button
-                      onClick={() => onNavigate("dashboard")}
-                      className="px-5 py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-sm flex items-center gap-2 border border-slate-300 shadow-xs transition-all hover:scale-105 cursor-pointer"
-                    >
-                      <FileCheck2 className="w-4 h-4" /> Jelajahi Data
-                    </button>
                   </div>
 
                   <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center gap-4 text-xs text-slate-500">
