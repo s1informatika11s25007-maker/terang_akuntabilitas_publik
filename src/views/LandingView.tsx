@@ -420,13 +420,56 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 </div>
 
                 {/* Leaflet Map Interactive Container */}
-                <div className="relative w-full h-[360px] sm:h-[420px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-white">
+                <div className="relative w-full h-[340px] sm:h-[400px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-white">
                   <LeafletMap
                     selectedMetric={mapMetric}
                     projects={PROJECTS}
                     onSelectProject={(projectId) => onNavigate("proyek")}
                     onSelectRegion={(regId) => onNavigate("dashboard")}
                   />
+                </div>
+
+                {/* Legenda & Panduan Indikator Visual Spasial Terbuka 100% */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-left max-w-5xl mx-auto pt-1">
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5">
+                    <div className="w-3.5 h-3.5 rounded-md bg-[#2E9E6B] shrink-0 border border-slate-300 shadow-2xs" />
+                    <div className="text-[11px] leading-tight">
+                      <strong className="block text-slate-900 font-bold">Tinggi / Terkendali</strong>
+                      <span className="text-slate-500 font-medium">
+                        {mapMetric === "serapan" ? "≥ 88% Realisasi" : mapMetric === "skor" ? "Skor ≥ 80 (Grade A)" : "0 Aduan Warga"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5">
+                    <div className="w-3.5 h-3.5 rounded-md bg-[#0FA3B1] shrink-0 border border-slate-300 shadow-2xs" />
+                    <div className="text-[11px] leading-tight">
+                      <strong className="block text-slate-900 font-bold">Baik / Rendah</strong>
+                      <span className="text-slate-500 font-medium">
+                        {mapMetric === "serapan" ? "80 - 87% Realisasi" : mapMetric === "skor" ? "Skor 70 - 79 (Grade B)" : "1 - 2 Aduan Warga"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5">
+                    <div className="w-3.5 h-3.5 rounded-md bg-[#F5A623] shrink-0 border border-slate-300 shadow-2xs" />
+                    <div className="text-[11px] leading-tight">
+                      <strong className="block text-slate-900 font-bold">Waspada / Perhatian</strong>
+                      <span className="text-slate-500 font-medium">
+                        {mapMetric === "serapan" ? "72 - 79% Realisasi" : mapMetric === "skor" ? "Skor 55 - 69 (Grade C)" : "3 - 4 Aduan Warga"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-2.5">
+                    <div className="w-3.5 h-3.5 rounded-md bg-[#D64545] shrink-0 border border-slate-300 shadow-2xs" />
+                    <div className="text-[11px] leading-tight">
+                      <strong className="block text-slate-900 font-bold">Kritis / Kesenjangan</strong>
+                      <span className="text-slate-500 font-medium">
+                        {mapMetric === "serapan" ? "< 72% Realisasi" : mapMetric === "skor" ? "Skor < 55 (Grade D/E)" : "≥ 5 Aduan Warga"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
