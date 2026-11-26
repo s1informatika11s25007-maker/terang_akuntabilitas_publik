@@ -61,10 +61,10 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
         attributionControl: false,
       });
 
-      // CartoDB Positron tiles for clean neutral map
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      // Official Leaflet / OpenStreetMap Tile Server
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
       mapInstanceRef.current = map;
