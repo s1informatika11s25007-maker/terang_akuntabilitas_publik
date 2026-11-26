@@ -36,7 +36,7 @@ export interface ActivityLog {
 export interface UserSession {
   email: string;
   name: string;
-  role: 'super_admin' | 'verifikator' | 'instansi';
+  role: 'super_admin' | 'verifikator' | 'instansi' | 'warga';
   region_id?: string;
   instansi_name?: string;
 }

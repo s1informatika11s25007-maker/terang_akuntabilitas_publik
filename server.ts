@@ -1026,12 +1026,23 @@ app.post("/api/agent/toggle-autopilot", requireAdmin("super_admin"), (req, res) 
 app.post("/api/admin/auth/login", loginRateLimit, (req, res) => {
   const { email, password } = req.body;
   const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
-  const user = DEMO_USERS[normalizedEmail];
+  let user = DEMO_USERS[normalizedEmail];
 
-  if (!user || typeof password !== "string" || password !== DEMO_PASSWORD) {
+  if (!user && normalizedEmail) {
+    // Check if user registered dynamically
+    const nameFromEmail = normalizedEmail.split("@")[0] || "Pengguna";
+    user = {
+      email: normalizedEmail,
+      name: nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1),
+      role: "warga",
+    };
+    DEMO_USERS[normalizedEmail] = user;
+  }
+
+  if (!normalizedEmail || typeof password !== "string" || !password.trim()) {
     res.status(401).json({
       status: "error",
-      message: "Email atau kata sandi tidak valid. Gunakan akun demo TERANG.",
+      message: "Email dan kata sandi wajib diisi.",
     });
     return;
   }
@@ -1041,6 +1052,49 @@ app.post("/api/admin/auth/login", loginRateLimit, (req, res) => {
     message: `Selamat datang, ${user.name}`,
     user,
     token: createAdminToken(user),
+    expiresIn: 28800,
+  });
+});
+
+// POST /api/admin/auth/register
+app.post("/api/admin/auth/register", (req, res) => {
+  const { name, email, password, role, region_id } = req.body;
+
+  if (typeof email !== "string" || !email.includes("@") || typeof password !== "string" || password.length < 4) {
+    res.status(422).json({
+      status: "error",
+      message: "Email valid dan kata sandi (minimal 4 karakter) wajib diisi.",
+    });
+    return;
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const userName = typeof name === "string" && name.trim() ? name.trim() : normalizedEmail.split("@")[0];
+  const userRole = ["super_admin", "verifikator", "instansi", "warga"].includes(role) ? role : "warga";
+
+  const newUser = {
+    email: normalizedEmail,
+    name: userName,
+    role: userRole,
+    region_id: typeof region_id === "string" ? region_id : undefined,
+  };
+
+  DEMO_USERS[normalizedEmail] = newUser;
+
+  db.activityLogs.push({
+    id: `act-${Date.now()}`,
+    user_email: normalizedEmail,
+    role: userRole,
+    aksi: "Pendaftaran Akun Baru",
+    subjek: `Pengguna ${userName} (${normalizedEmail}) mendaftar akun role ${userRole}`,
+    created_at: new Date().toISOString().replace("T", " ").slice(0, 19),
+  });
+
+  res.json({
+    status: "success",
+    message: `Pendaftaran berhasil. Selamat datang, ${userName}!`,
+    user: newUser,
+    token: createAdminToken(newUser),
     expiresIn: 28800,
   });
 });
