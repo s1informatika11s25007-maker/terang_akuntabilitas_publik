@@ -18,6 +18,7 @@ import {
   ChevronDown,
   BarChart3,
   Award,
+  AlertTriangle,
   UserCheck,
   UserPlus,
   Lock,
@@ -434,18 +435,21 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 <div className="grid md:grid-cols-2 gap-6 text-left">
                   <div className="bg-white border border-amber-200/80 p-6 rounded-2xl space-y-4 shadow-sm hover:shadow-md transition-all">
                     <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700 font-bold">
-                      ⚠️
+                      <AlertTriangle className="w-6 h-6 text-amber-700" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 font-display">Tantangan Pengawasan Klasik</h3>
-                    <ul className="space-y-2.5 text-xs text-slate-600">
-                      <li className="flex items-start gap-2">
-                        <span className="text-amber-500 font-bold">•</span> Keterlambatan proyek fisik di wilayah terpencil 33 Kabupaten/Kota.
+                    <ul className="space-y-3 text-xs text-slate-600">
+                      <li className="flex items-start gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                        <span>Keterlambatan proyek fisik di wilayah terpencil 33 Kabupaten/Kota.</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-amber-500 font-bold">•</span> Sulit mendeteksi dampak faktor eksternal (curah hujan tinggi BMKG / gempa bumi USGS).
+                      <li className="flex items-start gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                        <span>Sulit mendeteksi dampak faktor eksternal (curah hujan tinggi BMKG / gempa bumi USGS).</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-amber-500 font-bold">•</span> Laporan aduan warga menumpuk tanpa sistem triase otomatis yang adil.
+                      <li className="flex items-start gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                        <span>Laporan aduan warga menumpuk tanpa sistem triase yang adil dan efisien.</span>
                       </li>
                     </ul>
                   </div>
@@ -455,15 +459,18 @@ export const LandingView: React.FC<LandingViewProps> = ({
                       <ShieldCheck className="w-6 h-6 text-[#0B7C8A]" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 font-display">Solusi Otonom TERANG</h3>
-                    <ul className="space-y-2.5 text-xs text-slate-700">
-                      <li className="flex items-start gap-2">
-                        <span className="text-[#0FA3B1] font-bold">•</span> <strong className="text-slate-900 font-bold">SuperAgent Otonom 1-Klik</strong>: Memindai deviasi &amp; membuat rekomendasi.
+                    <ul className="space-y-3 text-xs text-slate-700">
+                      <li className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#0FA3B1] shrink-0 mt-0.5" />
+                        <span><strong className="text-slate-900 font-bold">Sistem Pengawasan Otonom</strong>: Memindai deviasi proyek &amp; membuat rekomendasi.</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-[#0FA3B1] font-bold">•</span> <strong className="text-slate-900 font-bold">Integrasi Sensor BMKG &amp; USGS</strong>: Analisis konteks bencana &amp; cuaca otomatis.
+                      <li className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#0FA3B1] shrink-0 mt-0.5" />
+                        <span><strong className="text-slate-900 font-bold">Integrasi Sensor BMKG &amp; USGS</strong>: Analisis konteks bencana &amp; cuaca otomatis.</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-[#0FA3B1] font-bold">•</span> <strong className="text-slate-900 font-bold">Kompresi Foto Bukti &amp; State Machine</strong>: Pelaporan warga aman &amp; terstruktur.
+                      <li className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#0FA3B1] shrink-0 mt-0.5" />
+                        <span><strong className="text-slate-900 font-bold">Kompresi Foto Bukti &amp; State Machine</strong>: Pelaporan warga aman &amp; terstruktur.</span>
                       </li>
                     </ul>
                   </div>
