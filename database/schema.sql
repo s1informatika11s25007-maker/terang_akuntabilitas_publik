@@ -60,16 +60,44 @@ CREATE TABLE IF NOT EXISTS projects (
     sumber_data VARCHAR
 );
 
--- 5. Tabel USERS (Pengguna RBAC Admin/Verifikator/Instansi)
+-- 5. Tabel USERS (Pengguna RBAC Admin/Verifikator/Instansi/Warga)
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR PRIMARY KEY,
     email VARCHAR UNIQUE NOT NULL,
+    password_hash VARCHAR,
     name VARCHAR NOT NULL,
-    role VARCHAR NOT NULL CHECK (role IN ('super_admin', 'verifikator', 'instansi')),
-    region_id VARCHAR REFERENCES regions(id) ON DELETE SET NULL
+    role VARCHAR NOT NULL CHECK (role IN ('super_admin', 'verifikator', 'instansi', 'warga')),
+    region_id VARCHAR REFERENCES regions(id) ON DELETE SET NULL,
+    status VARCHAR NOT NULL DEFAULT 'aktif' CHECK (status IN ('aktif', 'nonaktif')),
+    last_login_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. Tabel REPORTS (Laporan Aduan Warga Faktual)
+-- 6. Tabel USER_SESSIONS (Sesi Autentikasi & Token Login)
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id VARCHAR PRIMARY KEY,
+    user_id VARCHAR REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR UNIQUE NOT NULL,
+    user_agent TEXT,
+    ip_address VARCHAR,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 7. Tabel USER_REGISTRATIONS (Log Pendaftaran Akun Baru)
+CREATE TABLE IF NOT EXISTS user_registrations (
+    id VARCHAR PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    email VARCHAR UNIQUE NOT NULL,
+    password_hash VARCHAR NOT NULL,
+    nik VARCHAR,
+    kontak VARCHAR,
+    region_id VARCHAR REFERENCES regions(id) ON DELETE SET NULL,
+    status VARCHAR NOT NULL DEFAULT 'terverifikasi' CHECK (status IN ('pending', 'terverifikasi', 'ditolak')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 8. Tabel REPORTS (Laporan Aduan Warga Faktual)
 CREATE TABLE IF NOT EXISTS reports (
     id VARCHAR PRIMARY KEY,
     tracking_code VARCHAR UNIQUE NOT NULL,
@@ -97,7 +125,7 @@ CREATE TABLE IF NOT EXISTS reports (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. Tabel REPORT_PHOTOS (Foto Bukti Fisik Lapangan)
+-- 9. Tabel REPORT_PHOTOS (Foto Bukti Fisik Lapangan)
 CREATE TABLE IF NOT EXISTS report_photos (
     id VARCHAR PRIMARY KEY,
     report_id VARCHAR REFERENCES reports(id) ON DELETE CASCADE,
@@ -106,7 +134,7 @@ CREATE TABLE IF NOT EXISTS report_photos (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 8. Tabel REPORT_UPDATES (Riwayat Tahapan Status Laporan)
+-- 10. Tabel REPORT_UPDATES (Riwayat Tahapan Status Laporan)
 CREATE TABLE IF NOT EXISTS report_updates (
     id VARCHAR PRIMARY KEY,
     report_id VARCHAR REFERENCES reports(id) ON DELETE CASCADE,
@@ -119,7 +147,7 @@ CREATE TABLE IF NOT EXISTS report_updates (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 9. Tabel REPORT_SUPPORTS (Dukungan Warga / Upvotes)
+-- 11. Tabel REPORT_SUPPORTS (Dukungan Warga / Upvotes)
 CREATE TABLE IF NOT EXISTS report_supports (
     id VARCHAR PRIMARY KEY,
     report_id VARCHAR REFERENCES reports(id) ON DELETE CASCADE,
@@ -128,7 +156,7 @@ CREATE TABLE IF NOT EXISTS report_supports (
     CONSTRAINT unique_report_support UNIQUE (report_id, fingerprint)
 );
 
--- 10. Tabel AGENCY_RESPONSES (Tanggapan Resmi Dinas / Instansi)
+-- 12. Tabel AGENCY_RESPONSES (Tanggapan Resmi Dinas / Instansi)
 CREATE TABLE IF NOT EXISTS agency_responses (
     id VARCHAR PRIMARY KEY,
     report_id VARCHAR REFERENCES reports(id) ON DELETE CASCADE,
@@ -139,7 +167,7 @@ CREATE TABLE IF NOT EXISTS agency_responses (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 11. Tabel ACTIVITY_LOGS (Log Audit & Aktivitas Sistem)
+-- 13. Tabel ACTIVITY_LOGS (Log Audit & Aktivitas Sistem)
 CREATE TABLE IF NOT EXISTS activity_logs (
     id VARCHAR PRIMARY KEY,
     user_email VARCHAR,
@@ -150,7 +178,7 @@ CREATE TABLE IF NOT EXISTS activity_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 12. Tabel TRANSPARENCY_SCORES (Skor Indeks Transparansi Daerah)
+-- 14. Tabel TRANSPARENCY_SCORES (Skor Indeks Transparansi Daerah)
 CREATE TABLE IF NOT EXISTS transparency_scores (
     id VARCHAR PRIMARY KEY,
     region_id VARCHAR REFERENCES regions(id) ON DELETE CASCADE,
@@ -163,7 +191,9 @@ CREATE TABLE IF NOT EXISTS transparency_scores (
     dihitung_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Indeks untuk Mengoptimalkan Performa Query & Pencarian GIS
+-- Indeks untuk Mengoptimalkan Performa Query, Auth & GIS
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_sessions_token ON user_sessions(token);
 CREATE INDEX IF NOT EXISTS idx_reports_region ON reports(region_id);
 CREATE INDEX IF NOT EXISTS idx_reports_status ON reports(status);
 CREATE INDEX IF NOT EXISTS idx_reports_tracking ON reports(tracking_code);

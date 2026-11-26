@@ -17,11 +17,13 @@ import {
   ChevronDown,
   BarChart3,
   Award,
-  AlertTriangle,
+  UserCheck,
+  UserPlus,
 } from "lucide-react";
 
 interface LandingViewProps {
   onNavigate: (view: string) => void;
+  onOpenAuth: (tab?: "login" | "register") => void;
   kpis: {
     totalPagu: number;
     avgSerapan: number;
@@ -116,6 +118,7 @@ const SLIDE_MOTIONS = [
 
 export const LandingView: React.FC<LandingViewProps> = ({
   onNavigate,
+  onOpenAuth,
   kpis,
 }) => {
   const prefersReducedMotion = useReducedMotion();
@@ -244,7 +247,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
             className="w-full h-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-16"
           >
             {/* ============================================================ */}
-            {/* SLIDE 0: HERO & WELCOME */}
+            {/* SLIDE 0: HERO & WELCOME (DENGAN TOMBOL MASUK & DAFTAR AKUN) */}
             {/* ============================================================ */}
             {activeSlide === 0 && (
               <div className="max-w-6xl w-full grid lg:grid-cols-12 gap-8 items-center">
@@ -263,20 +266,35 @@ export const LandingView: React.FC<LandingViewProps> = ({
                   <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl">
                     Platform terpadu memantau APBD 33 kabupaten/kota, mendeteksi proyek tertinggal dengan konteks cuaca dan gempa nyata, serta memproses laporan warga secara otomatis dengan moderasi RBAC.
                   </p>
+
+                  {/* Tombol Akses Utama: Masuk Akun, Daftar Akun, Agen Otonom, & Jelajahi Data */}
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
-                      onClick={runAgent}
+                      onClick={() => onOpenAuth("login")}
                       className="px-6 py-3.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-teal-900/20 transition-all hover:scale-105 cursor-pointer"
                     >
-                      Jalankan Agen Otonom <ArrowRight className="w-4 h-4" />
+                      <UserCheck className="w-4 h-4" /> Masuk Akun
+                    </button>
+                    <button
+                      onClick={() => onOpenAuth("register")}
+                      className="px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-md transition-all hover:scale-105 cursor-pointer"
+                    >
+                      <UserPlus className="w-4 h-4" /> Daftar Akun Baru
+                    </button>
+                    <button
+                      onClick={runAgent}
+                      className="px-5 py-3.5 bg-teal-50 hover:bg-teal-100 text-[#0B7C8A] border border-teal-200 font-bold rounded-xl text-sm flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+                    >
+                      <Activity className="w-4 h-4" /> Agen Otonom
                     </button>
                     <button
                       onClick={() => onNavigate("dashboard")}
-                      className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-xl text-sm flex items-center gap-2 border border-slate-300 shadow-sm transition-all hover:scale-105 cursor-pointer"
+                      className="px-5 py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-sm flex items-center gap-2 border border-slate-300 shadow-xs transition-all hover:scale-105 cursor-pointer"
                     >
-                      Jelajahi Data <FileCheck2 className="w-4 h-4" />
+                      <FileCheck2 className="w-4 h-4" /> Jelajahi Data
                     </button>
                   </div>
+
                   <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center gap-4 text-xs text-slate-500">
                     <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5 text-[#0B7C8A]" /> Data APBD 33 Kab/Kota</span>
                     <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Privasi Pelapor Terjamin</span>
@@ -653,24 +671,31 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
                 <div className="flex flex-wrap items-center justify-center gap-4">
                   <button
-                    onClick={runAgent}
+                    onClick={() => onOpenAuth("login")}
                     className="px-8 py-4 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-xl shadow-teal-900/20 transition-all hover:scale-105 cursor-pointer"
                   >
-                    <Activity className="w-4 h-4 text-teal-200" /> Jalankan Agen Otonom
+                    <UserCheck className="w-4 h-4 text-teal-200" /> Masuk Akun
+                  </button>
+
+                  <button
+                    onClick={() => onOpenAuth("register")}
+                    className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-md transition-all hover:scale-105 cursor-pointer"
+                  >
+                    <UserPlus className="w-4 h-4 text-teal-300" /> Daftar Akun Baru
+                  </button>
+
+                  <button
+                    onClick={runAgent}
+                    className="px-8 py-4 bg-teal-50 hover:bg-teal-100 text-[#0B7C8A] border border-teal-200 font-bold rounded-2xl text-sm flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+                  >
+                    <Activity className="w-4 h-4" /> Jalankan Agen Otonom
                   </button>
 
                   <button
                     onClick={() => onNavigate("dashboard")}
-                    className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-2xl text-sm flex items-center gap-2 border border-slate-300 shadow-sm transition-all hover:scale-105 cursor-pointer"
+                    className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-2xl text-sm flex items-center gap-2 border border-slate-300 shadow-xs transition-all hover:scale-105 cursor-pointer"
                   >
                     Buka Dashboard <ArrowRight className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    onClick={() => onNavigate("lapor")}
-                    className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-md transition-all hover:scale-105 cursor-pointer"
-                  >
-                    Buat Laporan Warga
                   </button>
                 </div>
               </div>

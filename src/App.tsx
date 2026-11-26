@@ -199,6 +199,7 @@ export default function App() {
         {currentView === 'landing' && (
           <LandingView
             onNavigate={handleNavigate}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
             kpis={landingData.kpis}
           />
         )}
