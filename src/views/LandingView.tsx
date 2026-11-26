@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { LeafletMap } from "../components/LeafletMap";
+import { PROJECTS } from "../data/projectsData";
 import {
   ArrowRight,
   FileCheck2,
@@ -13,6 +15,9 @@ import {
   Users,
   Activity,
   ChevronDown,
+  BarChart3,
+  Award,
+  AlertTriangle,
 } from "lucide-react";
 
 interface LandingViewProps {
@@ -30,6 +35,7 @@ interface LandingViewProps {
 const SLIDE_LABELS = [
   "Sambutan & Hero",
   "Mengapa TERANG",
+  "Peta Choropleth Sumut",
   "Fitur Pengawasan",
   "Arsitektur & Sistem",
   "Statistik Kinerja",
@@ -66,7 +72,15 @@ const SLIDE_MOTIONS = [
     transition: { duration: 0.74, ease: [0.2, 0.8, 0.2, 1] as const },
     style: { transformPerspective: 1500, transformOrigin: "center center" },
   },
-  // Slide 2: Radial Circle ClipPath Expansion
+  // Slide 2: Peta Choropleth 3D Scale & Rotate Entrance
+  {
+    initial: { opacity: 0, scale: 0.92, rotateX: 12, filter: "blur(8px)" },
+    animate: { opacity: 1, scale: 1, rotateX: 0, filter: "blur(0px)" },
+    exit: { opacity: 0, scale: 1.04, rotateX: -10, filter: "blur(6px)" },
+    transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] as const },
+    style: { transformPerspective: 1500, transformOrigin: "center center" },
+  },
+  // Slide 3: Radial Circle ClipPath Expansion
   {
     initial: { opacity: 0, clipPath: "circle(0% at 50% 48%)", scale: 0.96 },
     animate: { opacity: 1, clipPath: "circle(145% at 50% 48%)", scale: 1 },
@@ -74,7 +88,7 @@ const SLIDE_MOTIONS = [
     transition: { duration: 0.88, ease: [0.16, 1, 0.3, 1] as const },
     style: { transformPerspective: 1400, transformOrigin: "center center" },
   },
-  // Slide 3: 3D ScaleX Door Opening Effect
+  // Slide 4: 3D ScaleX Door Opening Effect
   {
     initial: { opacity: 0, scaleX: 0.08, rotateY: 24, x: -40 },
     animate: { opacity: 1, scaleX: 1, rotateY: 0, x: 0 },
@@ -82,7 +96,7 @@ const SLIDE_MOTIONS = [
     transition: { duration: 0.78, ease: [0.65, 0, 0.35, 1] as const },
     style: { transformPerspective: 1700, transformOrigin: "left center" },
   },
-  // Slide 4: 3D Z-tilt Blur Rise
+  // Slide 5: 3D Z-tilt Blur Rise
   {
     initial: { opacity: 0, y: 110, rotateZ: 6, scale: 0.86, filter: "blur(10px)" },
     animate: { opacity: 1, y: 0, rotateZ: 0, scale: 1, filter: "blur(0px)" },
@@ -90,7 +104,7 @@ const SLIDE_MOTIONS = [
     transition: { duration: 0.76, ease: [0.22, 1, 0.36, 1] as const },
     style: { transformPerspective: 1400, transformOrigin: "center center" },
   },
-  // Slide 5: Inset Rounded Rect Reveal
+  // Slide 6: Inset Rounded Rect Reveal
   {
     initial: { opacity: 0, clipPath: "inset(48% 0% 48% 0% round 28px)", scale: 1.04 },
     animate: { opacity: 1, clipPath: "inset(0% 0% 0% 0% round 0px)", scale: 1 },
@@ -110,6 +124,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
   const slideContentRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const wheelLockRef = useRef(false);
+
+  // Map metric state for the Choropleth map slide
+  const [mapMetric, setMapMetric] = useState<"serapan" | "laporan" | "skor">("serapan");
 
   const totalSlides = SLIDE_LABELS.length;
 
@@ -227,7 +244,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
             className="w-full h-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-16"
           >
             {/* ============================================================ */}
-            {/* SLIDE 0: HERO & WELCOME (LIGHT THEME) */}
+            {/* SLIDE 0: HERO & WELCOME */}
             {/* ============================================================ */}
             {activeSlide === 0 && (
               <div className="max-w-6xl w-full grid lg:grid-cols-12 gap-8 items-center">
@@ -292,7 +309,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 1: MENGAPA TERANG (3D Y-Axis Flip Card Rotation - LIGHT) */}
+            {/* SLIDE 1: MENGAPA TERANG DIBUTUHKAN */}
             {/* ============================================================ */}
             {activeSlide === 1 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
@@ -349,9 +366,75 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 2: FITUR UTAMA PENGAWASAN (Circle Expansion - LIGHT) */}
+            {/* SLIDE 2: PETA CHOROPLETH & SEBARAN PROYEK SUMATERA UTARA */}
             {/* ============================================================ */}
             {activeSlide === 2 && (
+              <div className="max-w-6xl w-full space-y-4 text-center">
+                <div className="space-y-1.5">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
+                    PETA CHOROPLETH &amp; SEBARAN PROYEK
+                  </span>
+                  <h2 className="text-2xl sm:text-4xl font-extrabold font-display text-slate-900">
+                    Pemetaan Real-time 33 Kabupaten/Kota Sumut
+                  </h2>
+                  <p className="text-slate-600 text-xs sm:text-sm max-w-2xl mx-auto">
+                    Pantau Serapan APBD (%), Jumlah Aduan Warga, dan Skor Transparansi Daerah secara spasial dengan penanda lokasi proyek publik.
+                  </p>
+                </div>
+
+                {/* Metric Selector Controls Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs max-w-3xl mx-auto">
+                  <span className="text-xs font-bold text-slate-700 pl-2">Metrik Visualisasi:</span>
+                  <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                    <button
+                      onClick={() => setMapMetric("serapan")}
+                      className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                        mapMetric === "serapan"
+                          ? "bg-[#0B7C8A] text-white shadow-sm font-bold"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <BarChart3 className="w-3.5 h-3.5" /> Serapan APBD (%)
+                    </button>
+                    <button
+                      onClick={() => setMapMetric("laporan")}
+                      className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                        mapMetric === "laporan"
+                          ? "bg-[#0B7C8A] text-white shadow-sm font-bold"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <FileText className="w-3.5 h-3.5" /> Jumlah Aduan
+                    </button>
+                    <button
+                      onClick={() => setMapMetric("skor")}
+                      className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                        mapMetric === "skor"
+                          ? "bg-[#0B7C8A] text-white shadow-sm font-bold"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <Award className="w-3.5 h-3.5" /> Skor Transparansi
+                    </button>
+                  </div>
+                </div>
+
+                {/* Leaflet Map Interactive Container */}
+                <div className="relative w-full h-[360px] sm:h-[420px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-white">
+                  <LeafletMap
+                    selectedMetric={mapMetric}
+                    projects={PROJECTS}
+                    onSelectProject={(projectId) => onNavigate("proyek")}
+                    onSelectRegion={(regId) => onNavigate("dashboard")}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================ */}
+            {/* SLIDE 3: FITUR UTAMA PENGAWASAN */}
+            {/* ============================================================ */}
+            {activeSlide === 3 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
                   <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
@@ -408,9 +491,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 3: ARSITEKTUR & ALUR KERJA OTONOM (3D Door Opening - LIGHT) */}
+            {/* SLIDE 4: ARSITEKTUR & ALUR KERJA OTONOM */}
             {/* ============================================================ */}
-            {activeSlide === 3 && (
+            {activeSlide === 4 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
                   <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200">
@@ -459,9 +542,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 4: STATISTIK KINERJA (3D Z-Tilt Blur Rise - LIGHT) */}
+            {/* SLIDE 5: STATISTIK KINERJA */}
             {/* ============================================================ */}
-            {activeSlide === 4 && (
+            {activeSlide === 5 && (
               <div className="max-w-5xl w-full space-y-8 text-center">
                 <div className="space-y-2">
                   <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
@@ -509,9 +592,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 5: MULAI & AKSES APLIKASI (Inset Rounded Rect Reveal - LIGHT) */}
+            {/* SLIDE 6: MULAI & AKSES APLIKASI */}
             {/* ============================================================ */}
-            {activeSlide === 5 && (
+            {activeSlide === 6 && (
               <div className="max-w-4xl w-full space-y-8 text-center">
                 <div className="space-y-4">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0FA3B1] to-teal-700 flex items-center justify-center text-white font-extrabold text-2xl font-display mx-auto shadow-xl shadow-teal-900/20">
