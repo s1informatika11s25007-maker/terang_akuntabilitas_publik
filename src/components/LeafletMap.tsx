@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { SUMUT_GEOJSON } from '../data/geoJsonSumut';
 import { Project } from '../data/projectsData';
-import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 
 interface LeafletMapProps {
   selectedMetric: 'serapan' | 'laporan' | 'skor';
@@ -26,7 +25,6 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
-  const [isLegendOpen, setIsLegendOpen] = useState(false);
 
   // Helper color for metric
   const getColor = (value: number, metric: 'serapan' | 'laporan' | 'skor') => {
@@ -46,14 +44,14 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
     if (value >= 5) return '#D64545';
     if (value >= 3) return '#F5A623';
     if (value >= 1) return '#0FA3B1';
-    return '#94A3B8';
+    return '#2E9E6B';
   };
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
-      // Center of North Sumatra (approx 2.4° N, 99.0° E)
+      // Center of North Sumatra (approx 2.35° N, 98.85° E)
       const map = L.map(mapContainerRef.current, {
         center: [2.35, 98.85],
         zoom: 8,
@@ -63,9 +61,10 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
         attributionControl: false,
       });
 
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      // CartoDB Positron tiles for clean neutral map
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors',
+        subdomains: 'abcd',
       }).addTo(map);
 
       mapInstanceRef.current = map;
@@ -74,125 +73,168 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
 
     const map = mapInstanceRef.current;
 
-    // Remove existing GeoJSON layer if any
+    // Update GeoJSON Layer
     if (geoJsonLayerRef.current) {
       map.removeLayer(geoJsonLayerRef.current);
     }
 
-    // Add GeoJSON Choropleth
+    const onEachFeature = (feature: any, layer: L.Layer) => {
+      const props = feature.properties || {};
+      const regId = props.id || props.KABKOTA || '';
+      const regName = props.nama || props.NAME_2 || 'Kabupaten/Kota';
+
+      // Determine metric value
+      let value = 0;
+      let unit = '';
+      const customMetric = regionMetrics[regId];
+
+      if (customMetric) {
+        value = customMetric[selectedMetric] || 0;
+      } else {
+        // Mocked defaults if not computed
+        if (selectedMetric === 'serapan') value = props.serapan || 84.5;
+        else if (selectedMetric === 'laporan') value = props.laporan || 2;
+        else if (selectedMetric === 'skor') value = props.skor || 75;
+      }
+
+      if (selectedMetric === 'serapan') unit = '%';
+      else if (selectedMetric === 'laporan') unit = ' aduan';
+      else if (selectedMetric === 'skor') unit = ' / 100';
+
+      const isSelected = selectedRegionId && selectedRegionId === regId;
+
+      // Popup Content
+      const popupHtml = `
+        <div class="p-2 text-xs font-sans text-slate-800">
+          <strong class="text-sm font-bold block text-slate-900 mb-1">${regName}</strong>
+          <div class="flex items-center gap-1.5 my-1">
+            <span class="text-slate-500 font-medium">Status ${selectedMetric}:</span>
+            <span class="font-bold text-[#0FA3B1] font-mono">${value}${unit}</span>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-1.5 border-t border-slate-100 pt-1">Klik wilayah untuk memfilter dashboard</p>
+        </div>
+      `;
+
+      layer.bindPopup(popupHtml);
+
+      // Event handlers
+      layer.on({
+        mouseover: (e) => {
+          const l = e.target;
+          l.setStyle({
+            weight: 3,
+            color: '#0FA3B1',
+            fillOpacity: 0.8,
+          });
+        },
+        mouseout: (e) => {
+          if (geoJsonLayerRef.current) {
+            geoJsonLayerRef.current.resetStyle(e.target);
+          }
+        },
+        click: () => {
+          if (onSelectRegion && regId) {
+            onSelectRegion(regId);
+          }
+        },
+      });
+    };
+
     const geoJsonLayer = L.geoJSON(SUMUT_GEOJSON as any, {
-      style: (feature: any) => {
-        const regId = feature?.properties?.id;
-        const metrics = regionMetrics[regId] || { serapan: 78, laporan: 2, skor: 70 };
-        const val = metrics[selectedMetric];
-        const isSelected = selectedRegionId === regId;
+      style: (feature) => {
+        const props = feature?.properties || {};
+        const regId = props.id || '';
+        let val = 80;
+
+        if (regionMetrics[regId]) {
+          val = regionMetrics[regId][selectedMetric] || 0;
+        } else {
+          if (selectedMetric === 'serapan') val = props.serapan || 84.5;
+          else if (selectedMetric === 'laporan') val = props.laporan || 2;
+          else if (selectedMetric === 'skor') val = props.skor || 75;
+        }
+
+        const isSelected = selectedRegionId && selectedRegionId === regId;
 
         return {
           fillColor: getColor(val, selectedMetric),
           weight: isSelected ? 3 : 1.5,
           opacity: 1,
           color: isSelected ? '#0B2545' : '#FFFFFF',
-          fillOpacity: isSelected ? 0.75 : 0.55,
+          dashArray: isSelected ? '' : '2',
+          fillOpacity: isSelected ? 0.85 : 0.65,
         };
       },
-      onEachFeature: (feature: any, layer: L.Layer) => {
-        const props = feature.properties;
-        const metrics = regionMetrics[props.id] || { serapan: 78, laporan: 2, skor: 70 };
-        const val = metrics[selectedMetric];
-
-        let displayVal = `${metrics.serapan}%`;
-        if (selectedMetric === 'laporan') displayVal = `${metrics.laporan} aduan`;
-        if (selectedMetric === 'skor') displayVal = `${metrics.skor} / 100`;
-
-        const badgeColor = getColor(val, selectedMetric);
-        const tooltipHtml = `
-          <div style="background-color: rgba(11, 37, 69, 0.95); backdrop-filter: blur(8px); color: #FFFFFF; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); font-family: system-ui, sans-serif; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); min-width: 150px;">
-            <div style="font-weight: 700; font-size: 12px; margin-bottom: 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.15); padding-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
-              <span>${props.nama}</span>
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ${badgeColor};"></span>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
-              <span style="color: #94A3B8;">${selectedMetric === 'serapan' ? 'Serapan APBD' : selectedMetric === 'laporan' ? 'Total Laporan' : 'Skor Transparansi'}</span>
-              <strong style="font-family: monospace; font-size: 12px; color: ${badgeColor};">${displayVal}</strong>
-            </div>
-            ${selectedMetric === 'serapan' ? `
-            <div style="width: 100%; background: rgba(255,255,255,0.15); height: 5px; border-radius: 9999px; overflow: hidden;">
-              <div style="width: ${Math.min(100, metrics.serapan)}%; background: ${badgeColor}; height: 100%;"></div>
-            </div>` : ''}
-          </div>
-        `;
-
-        layer.bindTooltip(tooltipHtml, { sticky: true, direction: 'auto', className: 'leaflet-glass-tooltip' });
-
-        layer.on({
-          click: () => {
-            if (onSelectRegion) onSelectRegion(props.id);
-          },
-          mouseover: (e) => {
-            const l = e.target;
-            l.setStyle({ fillOpacity: 0.85, weight: 2.5 });
-          },
-          mouseout: (e) => {
-            geoJsonLayer.resetStyle(e.target);
-          },
-        });
-      },
+      onEachFeature,
     }).addTo(map);
 
     geoJsonLayerRef.current = geoJsonLayer;
 
-    // Render project markers
+    // Update Project Markers
     if (markersLayerRef.current) {
       markersLayerRef.current.clearLayers();
 
-      const displayedProjects = projects.slice(0, 45); // top prominent markers to prevent clutter
-      displayedProjects.forEach((proj) => {
-        let pinColor = '#3B82F6';
-        if (proj.status === 'selesai') pinColor = '#2E9E6B';
-        if (proj.status === 'mangkrak') pinColor = '#D64545';
-        if (proj.status === 'berjalan') pinColor = '#F5A623';
+      projects.forEach((proj) => {
+        if (!proj.lat || !proj.lng) return;
 
-        const marker = L.circleMarker([proj.lat, proj.lng], {
-          radius: 6,
-          fillColor: pinColor,
-          color: '#FFFFFF',
-          weight: 1.5,
-          opacity: 1,
-          fillOpacity: 0.9,
-        });
-
-        const popupContent = document.createElement('div');
-        popupContent.className = 'text-xs text-slate-800';
-        popupContent.innerHTML = `
-          <div class="font-bold text-slate-900 text-xs mb-1">${proj.nama}</div>
-          <div class="text-[11px] text-slate-500 mb-1.5">${proj.region_nama} · Sektor ${proj.sector_nama}</div>
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-slate-600">Pagu:</span>
-            <span class="font-mono font-semibold">Rp ${(proj.pagu / 1e9).toFixed(1)} M</span>
+        // Create custom SVG marker icon
+        const markerHtml = `
+          <div class="relative group cursor-pointer">
+            <div class="w-5 h-5 rounded-full bg-[#0FA3B1] border-2 border-white shadow-md flex items-center justify-center transform transition-transform hover:scale-125">
+              <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+            </div>
           </div>
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-slate-600">Progres Fisik:</span>
-            <span class="font-mono font-semibold text-teal-700">${proj.progres_fisik}%</span>
-          </div>
-          <button id="btn-proj-${proj.id}" class="w-full py-1 text-center bg-[#0B7C8A] text-white rounded font-medium hover:bg-[#096A76] transition-colors text-[11px]">
-            Lihat Rincian Proyek
-          </button>
         `;
 
-        popupContent.querySelector(`#btn-proj-${proj.id}`)?.addEventListener('click', () => {
-          if (onSelectProject) onSelectProject(proj.id);
+        const customIcon = L.divIcon({
+          html: markerHtml,
+          className: 'custom-project-marker',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
         });
 
-        marker.bindPopup(popupContent);
+        const marker = L.marker([proj.lat, proj.lng], { icon: customIcon });
+
+        const projPopup = `
+          <div class="p-2 text-xs font-sans text-slate-800 max-w-xs">
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200 inline-block mb-1">
+              ${proj.status.toUpperCase()}
+            </span>
+            <strong class="text-xs font-bold block text-slate-900 mb-1">${proj.nama}</strong>
+            <p class="text-[11px] text-slate-600 line-clamp-2 mb-1.5">${proj.deskripsi || ''}</p>
+            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100 font-mono">
+              <span>Pagu: Rp ${(proj.pagu / 1e9).toFixed(1)} M</span>
+              <span class="font-bold text-teal-700">Fisik: ${proj.progres_fisik}%</span>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(projPopup);
+
+        marker.on('click', () => {
+          if (onSelectProject) {
+            onSelectProject(proj.id);
+          }
+        });
+
         markersLayerRef.current?.addLayer(marker);
       });
     }
 
-    // Handle container resize & orientation changes for mobile devices
-    const resizeObserver = new ResizeObserver(() => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.invalidateSize();
+    // Auto fit bounds if single region is selected
+    if (selectedRegionId && SUMUT_GEOJSON) {
+      const feat = (SUMUT_GEOJSON.features as any[]).find(
+        (f) => (f.properties?.id || f.properties?.KABKOTA) === selectedRegionId
+      );
+      if (feat) {
+        const tempLayer = L.geoJSON(feat);
+        map.fitBounds(tempLayer.getBounds(), { padding: [30, 30], maxZoom: 11 });
       }
+    }
+
+    // Handle map resize observer for crisp rendering
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
     });
 
     if (mapContainerRef.current) {
@@ -205,75 +247,12 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
   }, [selectedMetric, selectedRegionId, projects, regionMetrics]);
 
   return (
-    <div className="relative w-full h-[360px] sm:h-[480px] rounded-xl overflow-hidden border border-slate-200 shadow-xs bg-[#E8EEF4]">
+    <div className="relative w-full h-[340px] sm:h-[400px] rounded-2xl overflow-hidden border border-slate-200 shadow-xs bg-[#E8EEF4]">
       <div
         ref={mapContainerRef}
         className="w-full h-full touch-pan-x touch-pan-y bg-[#E8EEF4]"
         style={{ backgroundColor: '#E8EEF4' }}
       />
-
-      {/* Floating Legend - Always Clear & Visible */}
-      <div className="absolute bottom-3 left-3 z-[1000] max-w-[calc(100%-24px)] sm:max-w-xs">
-        {/* Mobile toggle button */}
-        <button
-          onClick={() => setIsLegendOpen(!isLegendOpen)}
-          className="sm:hidden flex items-center gap-1.5 px-3 py-1.5 bg-white/95 backdrop-blur-md rounded-lg shadow-md border border-slate-300 text-[11px] font-bold text-slate-800"
-        >
-          <Layers className="w-3.5 h-3.5 text-[#0FA3B1]" />
-          <span>Legenda Peta ({selectedMetric === 'serapan' ? 'Serapan %' : selectedMetric === 'laporan' ? 'Aduan Warga' : 'Skor Transparansi'})</span>
-          {isLegendOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
-        </button>
-
-        {/* Legend Content Container */}
-        <div className={`${isLegendOpen ? 'block' : 'hidden'} sm:block mt-1 sm:mt-0 bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200 text-xs`}>
-          <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-200">
-            <span className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[#0FA3B1]" />
-              {selectedMetric === 'serapan' && 'Legenda Serapan APBD (%)'}
-              {selectedMetric === 'laporan' && 'Legenda Aduan Warga'}
-              {selectedMetric === 'skor' && 'Legenda Indeks Transparansi'}
-            </span>
-            <button
-              onClick={() => setIsLegendOpen(false)}
-              className="sm:hidden text-slate-400 hover:text-slate-600 p-0.5"
-            >
-              &times;
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-1 gap-1.5 text-[11px] font-medium">
-            <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-md shrink-0 shadow-2xs border border-slate-300" style={{ backgroundColor: '#2E9E6B' }}></span>
-              <span className="text-slate-700 truncate font-semibold">
-                {selectedMetric === 'serapan' ? 'Sangat Tinggi (≥ 88%)' : selectedMetric === 'skor' ? 'Sangat Transparan (≥ 80)' : '0 Aduan (Terkendali)'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-md shrink-0 shadow-2xs border border-slate-300" style={{ backgroundColor: '#0FA3B1' }}></span>
-              <span className="text-slate-700 truncate font-semibold">
-                {selectedMetric === 'serapan' ? 'Tinggi (80 - 87%)' : selectedMetric === 'skor' ? 'Transparan (70 - 79)' : '1 - 2 Aduan (Rendah)'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-md shrink-0 shadow-2xs border border-slate-300" style={{ backgroundColor: '#F5A623' }}></span>
-              <span className="text-slate-700 truncate font-semibold">
-                {selectedMetric === 'serapan' ? 'Waspada (72 - 79%)' : selectedMetric === 'skor' ? 'Cukup (55 - 69)' : '3 - 4 Aduan (Sedang)'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-md shrink-0 shadow-2xs border border-slate-300" style={{ backgroundColor: '#D64545' }}></span>
-              <span className="text-slate-700 truncate font-semibold">
-                {selectedMetric === 'serapan' ? 'Kritis (< 72%)' : selectedMetric === 'skor' ? 'Rendah (< 55)' : '≥ 5 Aduan (Tinggi)'}
-              </span>
-            </div>
-
-            <div className="pt-1.5 mt-1.5 border-t border-slate-200 flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-teal-500 ring-2 ring-teal-200 shrink-0"></span>
-              <span>Penanda Paket Proyek Fisik Publik</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
