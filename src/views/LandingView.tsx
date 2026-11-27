@@ -325,7 +325,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
     : currentMotion.exit;
 
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F8FAFC] text-slate-800 font-sans select-none">
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F8FAFC] text-slate-800 font-sans select-text">
       {/* Background Subtle Ambient Glows (Light Theme) */}
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-teal-100/60 blur-3xl" />
