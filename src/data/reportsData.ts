@@ -530,10 +530,20 @@ for (const reg of REGIONS) {
 
     const codeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let codeStr = '';
+    // Generate distinct 6-character string based on repSeq and region
+    const rawVal = (repSeq * 7919 + i * 104729) % 1073741824;
+    let seed = rawVal;
     for (let c = 0; c < 6; c++) {
-      codeStr += codeChars.charAt((repSeq * 13 + c * 7) % codeChars.length);
+      seed = (seed * 1664525 + 1013904223 + c * 37) % 2147483647;
+      codeStr += codeChars.charAt(Math.abs(seed) % codeChars.length);
     }
-    const trackingCode = `TRG-2026-${codeStr}`;
+    let trackingCode = `TRG-2026-${codeStr}`;
+    // Ensure uniqueness against existing tracking codes
+    let dupeSuffix = 1;
+    while (REPORTS.some(existing => existing.tracking_code === trackingCode)) {
+      trackingCode = `TRG-2026-${codeStr.slice(0, 4)}${codeChars[dupeSuffix % codeChars.length]}${codeChars[(dupeSuffix * 3) % codeChars.length]}`;
+      dupeSuffix++;
+    }
 
     const reportDate = new Date(2026, 1, 10 + (repSeq % 45));
     const createdStr = `${reportDate.toISOString().slice(0, 10)} 10:30`;

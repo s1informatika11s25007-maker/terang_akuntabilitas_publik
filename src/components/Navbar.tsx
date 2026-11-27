@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         };
       case 'instansi':
         return {
-          label: 'Dinas PUPR',
+          label: currentUser?.instansi_name ? currentUser.instansi_name.replace('Dinas Pekerjaan Umum & Penataan Ruang', 'Dinas PUPR') : 'Dinas Terkait',
           badgeCls: 'bg-blue-100 text-blue-800 border-blue-300 font-bold',
           btnLabel: 'Tanggapan Instansi',
           icon: Building2,

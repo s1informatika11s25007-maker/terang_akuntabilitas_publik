@@ -50,12 +50,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [selectedReport, setSelectedReport] = useState<CivicReport | null>(null);
   const [actionNotes, setActionNotes] = useState('');
   const [rejectReason, setRejectReason] = useState('');
-  const [proofPhoto, setProofPhoto] = useState('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80');
+  const [proofPhoto, setProofPhoto] = useState('');
 
-  // Agency official response state
+  // Agency official response state - initialized dynamically from DB or logged in user
   const [agencyTanggapan, setAgencyTanggapan] = useState('');
-  const [agencyPejabat, setAgencyPejabat] = useState('Ir. Hendra Lubis, M.Si');
-  const [agencyInstansi, setAgencyInstansi] = useState('Dinas PUPR Provinsi Sumatera Utara');
+  const [agencyPejabat, setAgencyPejabat] = useState('');
+  const [agencyInstansi, setAgencyInstansi] = useState('');
 
   // Import CSV state
   const [csvText, setCsvText] = useState('');
@@ -72,6 +72,22 @@ export const AdminView: React.FC<AdminViewProps> = ({
     fetchReports();
   }, []);
 
+  // Synchronize agency response form values dynamically from DB or user session
+  useEffect(() => {
+    if (selectedReport) {
+      if (selectedReport.agency_response) {
+        setAgencyInstansi(selectedReport.agency_response.instansi || '');
+        setAgencyPejabat(selectedReport.agency_response.pejabat || '');
+        setAgencyTanggapan(selectedReport.agency_response.tanggapan || '');
+      } else {
+        const defaultInstansi = currentUser?.instansi_name || (selectedReport.sector_nama ? `Dinas ${selectedReport.sector_nama}` : 'Dinas Terkait');
+        setAgencyInstansi(defaultInstansi);
+        setAgencyPejabat(currentUser?.name || '');
+        setAgencyTanggapan('');
+      }
+    }
+  }, [selectedReport, currentUser]);
+
   const fetchStats = async () => {
     try {
       const res = await fetch('/api/admin/stats', { headers: { Authorization: `Bearer ${authToken}` } });
@@ -86,11 +102,18 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/v1/reports');
+      const headers: Record<string, string> = {};
+      if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+      const res = await fetch('/api/admin/reports', { headers });
       const data = await res.json();
-      setReports(data.data || []);
-      if (data.data && data.data.length > 0 && !selectedReport) {
-        setSelectedReport(data.data[0]);
+      const loadedReports: CivicReport[] = data.data || [];
+      setReports(loadedReports);
+      if (loadedReports.length > 0) {
+        setSelectedReport((prev) => {
+          if (!prev) return loadedReports[0];
+          const found = loadedReports.find((r) => r.id === prev.id);
+          return found || loadedReports[0];
+        });
       }
     } catch (e) {
       console.error(e);
@@ -523,12 +546,73 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 <p className="leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200">
                   {selectedReport.deskripsi}
                 </p>
-                <div className="flex items-center gap-2 text-slate-500 text-[11px] pt-1">
-                  <span>Lokasi: {selectedReport.alamat}</span>
+
+                <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-slate-500 text-[11px] pt-1">
+                  <span>Lokasi: {selectedReport.alamat} ({selectedReport.region_nama})</span>
                   <span>·</span>
-                  <span>Pelapor: {selectedReport.is_anonim ? 'Warga Anonim' : selectedReport.nama_pelapor}</span>
+                  <span>Sektor: {selectedReport.sector_nama}</span>
+                  <span>·</span>
+                  <span>Pelapor: {selectedReport.is_anonim ? 'Warga Anonim' : selectedReport.nama_pelapor} {selectedReport.kontak && selectedReport.kontak !== '-' ? `(${selectedReport.kontak})` : ''}</span>
                 </div>
+
+                {/* Foto Bukti Warga dari DB */}
+                {selectedReport.foto_bukti && selectedReport.foto_bukti.length > 0 && (
+                  <div className="space-y-1.5 pt-2">
+                    <span className="font-semibold text-slate-700 block text-xs">Foto Bukti Aduan Warga ({selectedReport.foto_bukti.length}):</span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedReport.foto_bukti.map((img, idx) => (
+                        <a key={idx} href={img} target="_blank" rel="noopener noreferrer" className="block">
+                          <img src={img} alt={`Bukti ${idx + 1}`} className="w-16 h-16 object-cover rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Foto Bukti Hasil Penanganan dari DB */}
+                {selectedReport.foto_tindak_lanjut && selectedReport.foto_tindak_lanjut.length > 0 && (
+                  <div className="space-y-1.5 pt-2">
+                    <span className="font-semibold text-emerald-800 block text-xs">Foto Bukti Penanganan Instansi ({selectedReport.foto_tindak_lanjut.length}):</span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedReport.foto_tindak_lanjut.map((img, idx) => (
+                        <a key={idx} href={img} target="_blank" rel="noopener noreferrer" className="block">
+                          <img src={img} alt={`Penanganan ${idx + 1}`} className="w-16 h-16 object-cover rounded-lg border border-emerald-300 hover:opacity-90 transition-opacity" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Tanggapan Resmi Instansi dari DB */}
+              {selectedReport.agency_response && (
+                <div className="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 space-y-1.5 text-xs">
+                  <div className="flex items-center justify-between font-bold text-blue-900">
+                    <span>🏛️ {selectedReport.agency_response.instansi}</span>
+                    <span className="text-[10px] font-mono text-blue-600 font-normal">{selectedReport.agency_response.created_at}</span>
+                  </div>
+                  <p className="text-[#0B2545] font-medium leading-relaxed">{selectedReport.agency_response.tanggapan}</p>
+                  <div className="text-[10px] text-blue-700 italic pt-0.5">Penanggung Jawab: {selectedReport.agency_response.pejabat}</div>
+                </div>
+              )}
+
+              {/* Riwayat Timeline Updates dari DB */}
+              {selectedReport.updates && selectedReport.updates.length > 0 && (
+                <div className="space-y-2 pt-1">
+                  <h5 className="font-semibold text-slate-800 text-xs">Riwayat Perkembangan Timeline ({selectedReport.updates.length})</h5>
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                    {selectedReport.updates.map((upd) => (
+                      <div key={upd.id} className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-[11px] space-y-0.5">
+                        <div className="flex items-center justify-between font-semibold text-slate-800">
+                          <span>{upd.petugas} ({upd.status_ke})</span>
+                          <span className="font-mono text-[10px] text-slate-400">{upd.created_at}</span>
+                        </div>
+                        <p className="text-slate-600">{upd.catatan}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* AI Triage Suggestions */}
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2 text-xs">
@@ -560,6 +644,17 @@ export const AdminView: React.FC<AdminViewProps> = ({
                     rows={2}
                     placeholder="Tuliskan catatan hasil pemeriksaan faktual atau instruksi kepada instansi dinas..."
                     className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs focus:ring-1 focus:ring-[#0FA3B1] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 mb-1">URL Foto Bukti Penanganan (Opsional jika Selesai Tuntas)</label>
+                  <input
+                    type="text"
+                    value={proofPhoto}
+                    onChange={(e) => setProofPhoto(e.target.value)}
+                    placeholder="https://... (Kosongkan jika tidak melampirkan foto penanganan baru)"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs focus:ring-1 focus:ring-[#0FA3B1] focus:outline-none"
                   />
                 </div>
 

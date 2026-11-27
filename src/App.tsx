@@ -32,18 +32,30 @@ function computeInitialKpis() {
   const yearBudgets = BUDGETS.filter((b) => b.tahun === 2024);
   const totalPagu = yearBudgets.reduce((a, c) => a + c.pagu, 0);
   const totalReal = yearBudgets.reduce((a, c) => a + c.realisasi, 0);
-  const avgSerapan = totalPagu > 0 ? Number(((totalReal / totalPagu) * 100).toFixed(1)) : 87.6;
+  const avgSerapan = totalPagu > 0 ? Number(((totalReal / totalPagu) * 100).toFixed(1)) : 0;
   const totalProjects = PROJECTS.length;
   const totalReports = REPORTS.length;
   const completedReports = REPORTS.filter((r) => r.status === 'selesai' || r.status === 'ditindaklanjuti' || r.status === 'diverifikasi').length;
 
+  const processedReports = REPORTS.filter((r) => r.verified_at || r.completed_at || (r.updates && r.updates.length > 1));
+  let avgResponseDays = 1.5;
+  if (processedReports.length > 0) {
+    const totalDays = processedReports.reduce((sum, r) => {
+      const start = new Date(r.created_at).getTime();
+      const end = new Date(r.verified_at || r.completed_at || r.updates[r.updates.length - 1]?.created_at || r.created_at).getTime();
+      const diffDays = Math.max(0.1, (end - start) / (1000 * 60 * 60 * 24));
+      return sum + (isNaN(diffDays) ? 1 : diffDays);
+    }, 0);
+    avgResponseDays = Number((totalDays / processedReports.length).toFixed(1));
+  }
+
   return {
-    totalPagu: totalPagu || 56068458000000,
-    avgSerapan: avgSerapan || 87.6,
-    totalProjects: totalProjects || 156,
-    totalReports: totalReports || 52,
-    completedReports: completedReports || 32,
-    avgResponseDays: 2.1,
+    totalPagu,
+    avgSerapan,
+    totalProjects,
+    totalReports,
+    completedReports,
+    avgResponseDays,
   };
 }
 

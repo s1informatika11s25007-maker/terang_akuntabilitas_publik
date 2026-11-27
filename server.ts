@@ -1099,6 +1099,22 @@ app.post("/api/admin/auth/register", (req, res) => {
   });
 });
 
+// GET /api/admin/reports (Full report details for admin/verifikator/instansi)
+app.get("/api/admin/reports", requireAdmin(), (req, res) => {
+  const status = (req.query.status as string) || "all";
+  const region_id = (req.query.region_id as string) || "all";
+
+  let list = db.reports;
+  if (status !== "all") list = list.filter((r) => r.status === status);
+  if (region_id !== "all") list = list.filter((r) => r.region_id === region_id);
+
+  res.json({
+    status: "success",
+    total: list.length,
+    data: list,
+  });
+});
+
 // GET /api/admin/stats
 app.get("/api/admin/stats", requireAdmin(), (req, res) => {
   const pending = db.reports.filter((r) => r.status === "diterima").length;
@@ -1107,6 +1123,7 @@ app.get("/api/admin/stats", requireAdmin(), (req, res) => {
   ).length;
   const verified = db.reports.filter((r) => r.status === "diverifikasi").length;
   const completed = db.reports.filter((r) => r.status === "selesai").length;
+  const kpis = db.getKPIStats();
 
   res.json({
     status: "success",
@@ -1116,7 +1133,7 @@ app.get("/api/admin/stats", requireAdmin(), (req, res) => {
       diverifikasi: verified,
       ditindaklanjuti: inProgress,
       selesai: completed,
-      rata_respon_hari: 2.1,
+      rata_respon_hari: kpis.avgResponseDays,
     },
     activity_logs: db.activityLogs.slice(0, 20),
   });
@@ -1213,7 +1230,7 @@ app.post("/api/admin/reports/:id/status", requireAdmin("super_admin", "verifikat
       reportId: req.params.id,
       status,
       catatan: catatan || `Status laporan diperbarui menjadi ${status}.`,
-      fotoTindakLanjut: typeof foto_tindak_lanjut === "string" && /^https:\/\//i.test(foto_tindak_lanjut) && foto_tindak_lanjut.length <= 1000 ? foto_tindak_lanjut : undefined,
+      fotoTindakLanjut: typeof foto_tindak_lanjut === "string" && foto_tindak_lanjut.trim().length > 0 && foto_tindak_lanjut.length <= 1000 ? foto_tindak_lanjut : undefined,
       petugas: adminUser.name,
       userEmail: adminUser.email,
       role: adminUser.role,
@@ -1246,11 +1263,15 @@ app.post("/api/admin/reports/:id/agency-response", requireAdmin("super_admin", "
     return;
   }
 
+  const targetReport = db.reports.find((r) => r.id === req.params.id);
+  const defaultInstansi = adminUser.instansi_name || (targetReport?.sector_nama ? `Dinas ${targetReport.sector_nama}` : "Instansi Pemerintah Daerah");
+  const defaultPejabat = adminUser.name || "Pejabat Terkait";
+
   const report = db.addAgencyResponse({
     reportId: req.params.id,
-    instansi: instansi || "Dinas PUPR Provinsi Sumatera Utara",
-    pejabat: pejabat || "Kepala Bidang Pelaksanaan Jalan",
-    tanggapan,
+    instansi: instansi?.trim() || defaultInstansi,
+    pejabat: pejabat?.trim() || defaultPejabat,
+    tanggapan: tanggapan.trim(),
     userEmail: adminUser.email,
   });
 

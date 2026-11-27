@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import pg from 'pg';
 import { REGIONS, Region } from '../data/regionsData.js';
 import { SECTORS, Sector } from '../data/sectorsData.js';
 import { BUDGETS, BudgetRecord } from '../data/budgetsData.js';
@@ -14,6 +15,20 @@ import {
   validateReportStatusTransition,
   TransparencyScoreResult,
 } from '../lib/calculations.js';
+
+const { Pool } = pg;
+const dbPassword = process.env.SUPABASE_DB_PASSWORD || 'zr1AY3AP9bRXSDW1';
+const projectRef = 'lcykwnpwrcapunclkfoi';
+const connectionString =
+  process.env.DATABASE_URL ||
+  `postgresql://postgres:${dbPassword}@db.${projectRef}.supabase.co:5432/postgres`;
+
+export const pgPool = new Pool({
+  connectionString,
+  ssl: { rejectUnauthorized: false },
+  max: 10,
+  idleTimeoutMillis: 30000,
+});
 
 export class InvalidStatusTransitionError extends Error {
   public readonly statusCode = 409;
@@ -183,6 +198,258 @@ class DatabaseStore {
   constructor() {
     this.loadRealCSVData();
     this.loadPersistedState();
+    this.loadFromDatabase().catch((err) =>
+      console.warn('PostgreSQL auto-load notice:', err?.message)
+    );
+  }
+
+  public async loadFromDatabase() {
+    try {
+      const client = await pgPool.connect();
+      try {
+        // 1. Load Regions
+        const regRes = await client.query('SELECT * FROM regions ORDER BY nama ASC');
+        if (regRes.rows.length > 0) {
+          this.regions = regRes.rows.map((r: any) => ({
+            id: r.id,
+            nama: r.nama,
+            tipe: r.tipe,
+            kode_bps: String(r.kode_bps || ''),
+            geojson_key: r.geojson_key || r.nama,
+            populasi: Number(r.populasi) || 300000,
+            lat: Number(r.lat) || 3.5952,
+            lng: Number(r.lng) || 98.6722,
+            ibu_kota: r.ibu_kota || r.nama,
+          }));
+        }
+
+        // 2. Load Sectors
+        const secRes = await client.query('SELECT * FROM sectors ORDER BY id ASC');
+        if (secRes.rows.length > 0) {
+          this.sectors = secRes.rows;
+        }
+
+        // 3. Load Budgets
+        const bgtRes = await client.query(`
+          SELECT b.*, r.nama as region_nama, s.nama as sector_nama
+          FROM budgets b
+          LEFT JOIN regions r ON b.region_id = r.id
+          LEFT JOIN sectors s ON b.sector_id = s.id
+          ORDER BY b.tahun DESC, b.pagu DESC
+        `);
+        if (bgtRes.rows.length > 0) {
+          this.budgets = bgtRes.rows.map((b: any) => ({
+            id: b.id,
+            region_id: b.region_id,
+            region_nama: b.region_nama || 'Sumatera Utara',
+            sector_id: b.sector_id,
+            sector_nama: b.sector_nama || 'Umum',
+            tahun: Number(b.tahun),
+            pagu: Number(b.pagu),
+            realisasi: Number(b.realisasi),
+            serapan_persen: Number(b.serapan_persen),
+            sumber: b.sumber,
+          }));
+        }
+
+        // 4. Load Projects
+        const prjRes = await client.query(`
+          SELECT p.*, r.nama as region_nama, s.nama as sector_nama
+          FROM projects p
+          LEFT JOIN regions r ON p.region_id = r.id
+          LEFT JOIN sectors s ON p.sector_id = s.id
+          ORDER BY p.tahun DESC, p.pagu DESC
+        `);
+        if (prjRes.rows.length > 0) {
+          this.projects = prjRes.rows.map((p: any) => ({
+            id: p.id,
+            kode: p.kode,
+            nama: p.nama,
+            deskripsi: p.deskripsi || '',
+            region_id: p.region_id,
+            region_nama: p.region_nama || 'Sumatera Utara',
+            sector_id: p.sector_id,
+            sector_nama: p.sector_nama || 'Umum',
+            lokasi_nama: p.lokasi_nama || '',
+            lat: Number(p.lat) || 3.5952,
+            lng: Number(p.lng) || 98.6722,
+            pagu: Number(p.pagu),
+            realisasi: Number(p.realisasi),
+            progres_fisik: Number(p.progres_fisik),
+            status: p.status,
+            kontraktor: p.kontraktor || 'Penyedia Jasa',
+            tahun: Number(p.tahun),
+            tgl_mulai: p.tgl_mulai ? (p.tgl_mulai instanceof Date ? p.tgl_mulai.toISOString().slice(0, 10) : String(p.tgl_mulai).slice(0, 10)) : undefined,
+            tgl_target: p.tgl_target ? (p.tgl_target instanceof Date ? p.tgl_target.toISOString().slice(0, 10) : String(p.tgl_target).slice(0, 10)) : undefined,
+            sumber_data: p.sumber_data || 'LPSE / Data Publik',
+          }));
+        }
+
+        // 5. Load Reports & Updates & Agency Responses
+        const repRes = await client.query(`
+          SELECT r.*, reg.nama as region_nama, sec.nama as sector_nama, prj.nama as project_nama
+          FROM reports r
+          LEFT JOIN regions reg ON r.region_id = reg.id
+          LEFT JOIN sectors sec ON r.sector_id = sec.id
+          LEFT JOIN projects prj ON r.project_id = prj.id
+          ORDER BY r.created_at DESC
+        `);
+
+        const updRes = await client.query('SELECT * FROM report_updates ORDER BY created_at ASC');
+        const resRes = await client.query('SELECT * FROM agency_responses ORDER BY created_at ASC');
+
+        const updatesMap = new Map<string, ReportUpdate[]>();
+        for (const upd of updRes.rows) {
+          const list = updatesMap.get(upd.report_id) || [];
+          list.push({
+            id: upd.id,
+            report_id: upd.report_id,
+            status_dari: upd.status_dari,
+            status_ke: upd.status_ke,
+            catatan: upd.catatan,
+            petugas: upd.petugas,
+            is_public: upd.is_public !== false,
+            created_at: upd.created_at ? new Date(upd.created_at).toISOString().replace('T', ' ').slice(0, 19) : '',
+          });
+          updatesMap.set(upd.report_id, list);
+        }
+
+        const responsesMap = new Map<string, AgencyResponse>();
+        for (const resItem of resRes.rows) {
+          responsesMap.set(resItem.report_id, {
+            id: resItem.id,
+            report_id: resItem.report_id,
+            instansi: resItem.instansi,
+            pejabat: resItem.pejabat,
+            tanggapan: resItem.tanggapan,
+            created_at: resItem.created_at ? new Date(resItem.created_at).toISOString().replace('T', ' ').slice(0, 19) : '',
+          });
+        }
+
+        if (repRes.rows.length > 0) {
+          this.reports = repRes.rows.map((r: any) => ({
+            id: r.id,
+            tracking_code: r.tracking_code,
+            project_id: r.project_id,
+            project_nama: r.project_nama,
+            region_id: r.region_id,
+            region_nama: r.region_nama || 'Sumatera Utara',
+            sector_id: r.sector_id,
+            sector_nama: r.sector_nama || 'Umum',
+            kategori: r.kategori,
+            judul: r.judul,
+            deskripsi: r.deskripsi,
+            lat: Number(r.lat),
+            lng: Number(r.lng),
+            alamat: r.alamat || '',
+            nama_pelapor: r.nama_pelapor || 'Warga',
+            kontak: r.kontak || '-',
+            is_anonim: Boolean(r.is_anonim),
+            status: r.status,
+            alasan_tolak: r.alasan_tolak,
+            dukungan_count: Number(r.dukungan_count || 1),
+            verified_by: r.verified_by,
+            verified_at: r.verified_at ? new Date(r.verified_at).toISOString().replace('T', ' ').slice(0, 19) : undefined,
+            completed_at: r.completed_at ? new Date(r.completed_at).toISOString().replace('T', ' ').slice(0, 19) : undefined,
+            created_at: r.created_at ? new Date(r.created_at).toISOString().replace('T', ' ').slice(0, 19) : new Date().toISOString(),
+            foto_bukti: [],
+            updates: updatesMap.get(r.id) || [],
+            agency_response: responsesMap.get(r.id),
+            ai_kategori: r.kategori,
+            ai_urgensi: r.ai_urgensi || 3,
+            ai_ringkasan: r.ai_ringkasan || '',
+            ai_dupe_of: r.ai_dupe_of,
+          }));
+        }
+
+        // 6. Load Activity Logs
+        const actRes = await client.query('SELECT * FROM activity_logs ORDER BY created_at DESC LIMIT 100');
+        if (actRes.rows.length > 0) {
+          this.activityLogs = actRes.rows.map((act: any) => ({
+            id: act.id,
+            user_email: act.user_email,
+            role: act.role,
+            aksi: act.aksi,
+            subjek: act.subjek,
+            created_at: act.created_at ? new Date(act.created_at).toISOString().replace('T', ' ').slice(0, 19) : '',
+          }));
+        }
+
+        console.log(`✅ [PostgreSQL Supabase] Full Data Berhasil Dimuat dari Database: ${this.regions.length} Wilayah, ${this.sectors.length} Sektor, ${this.budgets.length} Budget, ${this.projects.length} Proyek, ${this.reports.length} Aduan.`);
+      } finally {
+        client.release();
+      }
+    } catch (err: any) {
+      console.warn('⚠️ Gagal koneksi ke PostgreSQL Supabase, menggunakan data cache:', err?.message);
+    }
+  }
+
+  public async syncReportToDatabase(report: CivicReport) {
+    try {
+      await pgPool.query(
+        `INSERT INTO reports (id, tracking_code, project_id, region_id, sector_id, kategori, judul, deskripsi, lat, lng, alamat, nama_pelapor, kontak, is_anonim, status, alasan_tolak, dukungan_count, verified_by, verified_at, completed_at, ai_urgensi, ai_ringkasan, ai_dupe_of, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+         ON CONFLICT (id) DO UPDATE SET
+           status = EXCLUDED.status,
+           alasan_tolak = EXCLUDED.alasan_tolak,
+           dukungan_count = EXCLUDED.dukungan_count,
+           verified_by = EXCLUDED.verified_by,
+           verified_at = EXCLUDED.verified_at,
+           completed_at = EXCLUDED.completed_at,
+           ai_urgensi = EXCLUDED.ai_urgensi,
+           ai_ringkasan = EXCLUDED.ai_ringkasan;`,
+        [
+          report.id, report.tracking_code, report.project_id || null, report.region_id, report.sector_id, report.kategori,
+          report.judul, report.deskripsi, report.lat, report.lng, report.alamat, report.nama_pelapor, report.kontak, report.is_anonim,
+          report.status, report.alasan_tolak || null, report.dukungan_count, report.verified_by || null,
+          report.verified_at ? new Date(report.verified_at) : null,
+          report.completed_at ? new Date(report.completed_at) : null,
+          report.ai_urgensi || 3, report.ai_ringkasan || '', report.ai_dupe_of || null,
+          report.created_at ? new Date(report.created_at) : new Date()
+        ]
+      );
+    } catch (err: any) {
+      console.warn('Sync report DB error:', err?.message);
+    }
+  }
+
+  public async syncUpdateToDatabase(upd: ReportUpdate) {
+    try {
+      await pgPool.query(
+        `INSERT INTO report_updates (id, report_id, status_dari, status_ke, catatan, petugas, is_public, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         ON CONFLICT (id) DO NOTHING`,
+        [upd.id, upd.report_id, upd.status_dari || null, upd.status_ke, upd.catatan, upd.petugas, upd.is_public !== false, upd.created_at ? new Date(upd.created_at) : new Date()]
+      );
+    } catch (err: any) {
+      console.warn('Sync report update DB error:', err?.message);
+    }
+  }
+
+  public async syncAgencyResponseToDatabase(ar: AgencyResponse) {
+    try {
+      await pgPool.query(
+        `INSERT INTO agency_responses (id, report_id, instansi, pejabat, tanggapan, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         ON CONFLICT (id) DO NOTHING`,
+        [ar.id, ar.report_id, ar.instansi, ar.pejabat, ar.tanggapan, ar.created_at ? new Date(ar.created_at) : new Date()]
+      );
+    } catch (err: any) {
+      console.warn('Sync agency response DB error:', err?.message);
+    }
+  }
+
+  public async syncActivityLogToDatabase(act: ActivityLog) {
+    try {
+      await pgPool.query(
+        `INSERT INTO activity_logs (id, user_email, role, aksi, subjek, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         ON CONFLICT (id) DO NOTHING`,
+        [act.id, act.user_email, act.role, act.aksi, act.subjek, act.created_at ? new Date(act.created_at) : new Date()]
+      );
+    } catch (err: any) {
+      console.warn('Sync activity log DB error:', err?.message);
+    }
   }
 
   public loadPersistedState(filePath: string = this.stateFilePath) {
@@ -387,13 +654,25 @@ class DatabaseStore {
     const totalReports = this.reports.length;
     const completedReports = this.reports.filter((r) => r.status === 'selesai' || r.status === 'ditindaklanjuti' || r.status === 'diverifikasi').length;
 
+    const processedReports = this.reports.filter((r) => r.verified_at || r.completed_at || (r.updates && r.updates.length > 1));
+    let avgResponseDays = 1.5;
+    if (processedReports.length > 0) {
+      const totalDays = processedReports.reduce((sum, r) => {
+        const start = new Date(r.created_at).getTime();
+        const end = new Date(r.verified_at || r.completed_at || r.updates[r.updates.length - 1]?.created_at || r.created_at).getTime();
+        const diffDays = Math.max(0.1, (end - start) / (1000 * 60 * 60 * 24));
+        return sum + (isNaN(diffDays) ? 1 : diffDays);
+      }, 0);
+      avgResponseDays = Number((totalDays / processedReports.length).toFixed(1));
+    }
+
     return {
       totalPagu,
       avgSerapan,
       totalProjects,
       totalReports,
       completedReports,
-      avgResponseDays: 2.1,
+      avgResponseDays,
     };
   }
 
@@ -515,16 +794,24 @@ class DatabaseStore {
 
     this.reports.unshift(newReport);
 
-    this.activityLogs.unshift({
+    const actLog: ActivityLog = {
       id: `act-${Date.now()}`,
       user_email: 'public_citizen',
       role: 'warga',
       aksi: 'Submit Laporan',
       subjek: `Laporan baru ${tracking_code} (${newReport.judul.slice(0, 40)}...)`,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
-    });
+    };
+    this.activityLogs.unshift(actLog);
 
     this.scheduleSave();
+
+    // Sync to PostgreSQL Supabase Database
+    this.syncReportToDatabase(newReport);
+    if (newReport.updates && newReport.updates.length > 0) {
+      this.syncUpdateToDatabase(newReport.updates[0]);
+    }
+    this.syncActivityLogToDatabase(actLog);
 
     return { report: newReport, duplicateCheck };
   }
@@ -583,7 +870,7 @@ class DatabaseStore {
       }
     }
 
-    rep.updates.push({
+    const newUpd: ReportUpdate = {
       id: `upd-${Date.now()}`,
       report_id: rep.id,
       status_dari: oldStatus,
@@ -592,18 +879,25 @@ class DatabaseStore {
       petugas: params.petugas,
       is_public: true,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
-    });
+    };
+    rep.updates.push(newUpd);
 
-    this.activityLogs.unshift({
+    const actLog: ActivityLog = {
       id: `act-${Date.now()}`,
       user_email: params.userEmail,
       role: params.role,
       aksi: 'Ubah Status Laporan',
       subjek: `${rep.tracking_code} diubah dari ${oldStatus} -> ${params.status}`,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
-    });
+    };
+    this.activityLogs.unshift(actLog);
 
     this.scheduleSave();
+
+    // Sync to PostgreSQL Supabase Database
+    this.syncReportToDatabase(rep);
+    this.syncUpdateToDatabase(newUpd);
+    this.syncActivityLogToDatabase(actLog);
 
     return rep;
   }
@@ -630,16 +924,21 @@ class DatabaseStore {
 
     rep.agency_response = newResponse;
 
-    this.activityLogs.unshift({
+    const actLog: ActivityLog = {
       id: `act-${Date.now()}`,
       user_email: params.userEmail,
       role: 'instansi',
       aksi: 'Tanggapan Resmi Instansi',
       subjek: `Tanggapan pada laporan ${rep.tracking_code}`,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
-    });
+    };
+    this.activityLogs.unshift(actLog);
 
     this.scheduleSave();
+
+    // Sync to PostgreSQL Supabase Database
+    this.syncAgencyResponseToDatabase(newResponse);
+    this.syncActivityLogToDatabase(actLog);
 
     return rep;
   }
