@@ -760,70 +760,70 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN ELEGANT WHITE (SISI KANAN LEBIH LEBAR - 60% : 40%) */}
+            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN FULL-BLEED SEAMLESS PAGE LAYOUT */}
             {/* ============================================================ */}
             {activeSlide === 6 && (
-              <div className="w-full h-full flex flex-col lg:flex-row items-stretch justify-between overflow-hidden bg-white">
-                {/* SISI KIRI: SHOWCASE VALUE PROPOSITION (40% Lebar - lg:w-5/12) */}
-                <div className="lg:w-5/12 bg-gradient-to-br from-slate-50 via-white to-teal-50/50 text-slate-800 p-8 sm:p-12 lg:p-14 flex flex-col justify-between relative overflow-hidden text-left border-r border-slate-200/80">
-                  <div className="absolute top-0 right-0 w-80 h-80 bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="w-full h-full flex flex-col lg:flex-row items-stretch justify-between overflow-hidden">
+                {/* SISI KIRI: ELEGANT DEEP SLATE SHOWCASE (40% Lebar - lg:w-5/12 - TIDAK FULL PUTIH) */}
+                <div className="lg:w-5/12 bg-[#0F172A] text-white p-8 sm:p-12 lg:p-14 flex flex-col justify-between relative overflow-hidden text-left shadow-xl">
+                  <div className="absolute top-0 right-0 w-80 h-80 bg-[#0FA3B1]/20 rounded-full blur-3xl pointer-events-none" />
 
                   <div className="space-y-5 relative z-10 max-w-lg">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200/80 shadow-2xs">
-                      <ShieldCheck className="w-4 h-4 text-[#0B7C8A]" />
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#0FA3B1]/20 text-teal-300 border border-teal-500/30">
+                      <ShieldCheck className="w-4 h-4 text-teal-300" />
                       PORTAL ADUAN WARGA &amp; AKUNTABILITAS PUBLIK
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl font-extrabold font-display leading-tight text-slate-900">
+                    <h2 className="text-2xl sm:text-4xl font-extrabold font-display leading-tight text-white">
                       Kawal Anggaran APBD.
                       <br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] to-teal-700">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] via-teal-300 to-amber-300">
                         Laporkan Faktual di Lapangan.
                       </span>
                     </h2>
 
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
                       Satu akun terpadu untuk warga Sumatera Utara, verifikator inspektorat, dan instansi dinas terkait. Kirim aduan fisik proyek publik secara transparan, aman, dan terpantau real-time.
                     </p>
 
-                    <div className="pt-2 space-y-3 text-xs text-slate-700">
+                    <div className="pt-2 space-y-3 text-xs text-slate-300">
                       <div className="flex items-start gap-3">
-                        <span className="p-1.5 rounded-lg bg-teal-100/70 text-[#0B7C8A] font-bold shrink-0">✓</span>
+                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-slate-900 block font-bold">Privasi Pelapor Faktual &amp; Enkripsi Data</strong>
-                          <span className="text-slate-500 text-[11px]">Identitas pelapor terenkripsi aman dan mendukung mode pelaporan anonim.</span>
+                          <strong className="text-white block font-bold">Privasi Pelapor Faktual &amp; Enkripsi Data</strong>
+                          <span className="text-slate-400 text-[11px]">Identitas pelapor terenkripsi aman dan mendukung mode pelaporan anonim.</span>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <span className="p-1.5 rounded-lg bg-teal-100/70 text-[#0B7C8A] font-bold shrink-0">✓</span>
+                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-slate-900 block font-bold">Kompresi Foto Fisik &amp; Kode Tracking TRG-2026</strong>
-                          <span className="text-slate-500 text-[11px]">Foto dikompres otomatis di HP/browser dan diberi nomor resi pantau publik.</span>
+                          <strong className="text-white block font-bold">Kompresi Foto Fisik &amp; Kode Tracking TRG-2026</strong>
+                          <span className="text-slate-400 text-[11px]">Foto dikompres otomatis di HP/browser dan diberi nomor resi pantau publik.</span>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <span className="p-1.5 rounded-lg bg-teal-100/70 text-[#0B7C8A] font-bold shrink-0">✓</span>
+                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-slate-900 block font-bold">Moderasi State Machine &amp; Respons Dinas</strong>
-                          <span className="text-slate-500 text-[11px]">Transisi status laporan diverifikasi secara akuntabel hingga tindak lanjut dinas.</span>
+                          <strong className="text-white block font-bold">Moderasi State Machine &amp; Respons Dinas</strong>
+                          <span className="text-slate-400 text-[11px]">Transisi status laporan diverifikasi secara akuntabel hingga tindak lanjut dinas.</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Summary Footer on Left Side */}
-                  <div className="pt-5 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-500 relative z-10">
+                  <div className="pt-5 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
                     <span>52 Laporan Faktual</span>
                     <span>•</span>
                     <span>156 Paket Proyek</span>
                     <span>•</span>
-                    <span className="text-[#0B7C8A] font-bold">33 Kab/Kota Sumut</span>
+                    <span className="text-teal-400 font-bold">33 Kab/Kota Sumut</span>
                   </div>
                 </div>
 
-                {/* SISI KANAN: FORM LOGIN & REGISTER LEBIH LEBAR (60% Lebar - lg:w-7/12) */}
+                {/* SISI KANAN: FORM LOGIN & REGISTER ELEGANT WHITE LEBIH LEBAR (60% Lebar - lg:w-7/12) */}
                 <div className="lg:w-7/12 bg-white p-8 sm:p-12 lg:p-16 flex flex-col justify-between text-left space-y-5">
                   <div className="max-w-xl mx-auto w-full my-auto space-y-5">
                     {/* Header Title inside Right Panel */}
