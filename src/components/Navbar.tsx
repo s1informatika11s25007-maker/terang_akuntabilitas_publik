@@ -31,8 +31,22 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  const isActive = (id: string) =>
-    currentView === id || (id === 'laporan' && (currentView === 'lapor' || currentView === 'lacak'));
+  const isActive = (id: string) => {
+    if (id === 'landing') {
+      return currentUser
+        ? (currentView === 'admin' || currentView === 'dashboard')
+        : currentView === 'landing';
+    }
+    return currentView === id || (id === 'laporan' && (currentView === 'lapor' || currentView === 'lacak'));
+  };
+
+  const handleHomeClick = () => {
+    if (currentUser) {
+      onNavigate(currentUser.role === 'warga' ? 'dashboard' : 'admin');
+    } else {
+      onNavigate('landing');
+    }
+  };
 
   const getRoleInfo = (role?: string) => {
     switch (role) {
@@ -76,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-16 gap-2 xl:gap-3">
           {/* Brand Logo & Title */}
           <button
-            onClick={() => onNavigate('landing')}
+            onClick={handleHomeClick}
             className="flex items-center gap-2 group shrink-0 text-left focus:outline-none cursor-pointer"
             aria-label="Beranda TERANG"
           >
@@ -108,10 +122,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200/80 shrink min-w-0" aria-label="Navigasi utama">
             {NAV_ITEMS.map((item) => {
               const active = isActive(item.id);
+              const targetView = item.id === 'landing' && currentUser ? (currentUser.role === 'warga' ? 'dashboard' : 'admin') : item.id;
               return (
                 <button
                   key={item.id}
-                  onClick={() => onNavigate(item.id)}
+                  onClick={() => onNavigate(targetView)}
                   aria-current={active ? 'page' : undefined}
                   className={`px-2 xl:px-2.5 py-1.5 rounded-lg text-[11px] xl:text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     active
@@ -253,17 +268,20 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-1 shadow-lg">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => { onNavigate(item.id); setMobileMenuOpen(false); }}
-              className={`w-full text-left px-3.5 py-2.5 text-sm font-semibold rounded-xl transition-colors ${
-                isActive(item.id) ? 'bg-teal-50 text-[#0B7C8A] font-bold' : 'text-slate-800 hover:bg-slate-100'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const targetView = item.id === 'landing' && currentUser ? (currentUser.role === 'warga' ? 'dashboard' : 'admin') : item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => { onNavigate(targetView); setMobileMenuOpen(false); }}
+                className={`w-full text-left px-3.5 py-2.5 text-sm font-semibold rounded-xl transition-colors ${
+                  isActive(item.id) ? 'bg-teal-50 text-[#0B7C8A] font-bold' : 'text-slate-800 hover:bg-slate-100'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
           <div className="pt-2.5 border-t border-slate-100 space-y-2">
             <button
               onClick={() => {
@@ -280,35 +298,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => { onOpenTanyaTerang(); setMobileMenuOpen(false); }}
               className="w-full text-left px-3.5 py-2.5 text-sm font-semibold text-[#0B7C8A] bg-teal-50 rounded-xl flex items-center gap-2"
             >
-              <MessageSquare className="w-4 h-4" /> Tanya TERANG (Pusat Informasi)
+              <MessageSquare className="w-4 h-4 text-[#0B7C8A]" /> Tanya TERANG
             </button>
-            {currentUser ? (
-              <>
-                <button
-                  onClick={() => { onNavigate('admin'); setMobileMenuOpen(false); }}
-                  className="w-full text-left px-3.5 py-2.5 text-sm font-bold text-slate-900 bg-teal-50 border border-teal-200 rounded-xl flex items-center justify-between"
-                >
-                  <span className="flex items-center gap-2">
-                    <RoleIcon className="w-4 h-4 text-[#0B7C8A]" />
-                    <span>{roleInfo.btnLabel}</span>
-                  </span>
-                  <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-mono font-extrabold uppercase ${roleInfo.badgeCls}`}>
-                    {roleInfo.label}
-                  </span>
-                </button>
-                <button
-                  onClick={() => { onLogout(); setMobileMenuOpen(false); }}
-                  className="w-full text-left px-3.5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" /> Keluar ({currentUser.name})
-                </button>
-              </>
-            ) : (
+            {currentUser && (
               <button
-                onClick={() => { onOpenAuth(); setMobileMenuOpen(false); }}
-                className="w-full text-left px-3.5 py-2.5 text-sm font-semibold text-slate-800 bg-slate-100 rounded-xl"
+                onClick={() => { onLogout(); setMobileMenuOpen(false); }}
+                className="w-full text-left px-3.5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-2"
               >
-                Masuk Pengelola
+                <LogOut className="w-4 h-4 text-red-600" /> Keluar Akun ({currentUser.name})
               </button>
             )}
           </div>
