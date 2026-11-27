@@ -760,89 +760,89 @@ export const LandingView: React.FC<LandingViewProps> = ({
             )}
 
             {/* ============================================================ */}
-            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN FULL-BLEED SEAMLESS PAGE LAYOUT */}
+            {/* SLIDE 6: FORM MASUK & DAFTAR AKUN ELEGANT WHITE (SISI KANAN LEBIH LEBAR - 60% : 40%) */}
             {/* ============================================================ */}
             {activeSlide === 6 && (
-              <div className="w-full h-full flex flex-col lg:flex-row items-stretch justify-between overflow-hidden">
-                {/* LEFT SIDE: SEAMLESS CIVIC REPORTING & TRANSPARENCY SHOWCASE (58% Width) */}
-                <div className="lg:w-7/12 bg-[#0F172A] text-white p-8 sm:p-12 lg:p-16 flex flex-col justify-between relative overflow-hidden text-left">
-                  <div className="absolute top-0 right-0 w-96 h-96 bg-[#0FA3B1]/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="w-full h-full flex flex-col lg:flex-row items-stretch justify-between overflow-hidden bg-white">
+                {/* SISI KIRI: SHOWCASE VALUE PROPOSITION (40% Lebar - lg:w-5/12) */}
+                <div className="lg:w-5/12 bg-gradient-to-br from-slate-50 via-white to-teal-50/50 text-slate-800 p-8 sm:p-12 lg:p-14 flex flex-col justify-between relative overflow-hidden text-left border-r border-slate-200/80">
+                  <div className="absolute top-0 right-0 w-80 h-80 bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
 
-                  <div className="space-y-6 relative z-10 max-w-xl">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#0FA3B1]/20 text-teal-300 border border-teal-500/30">
-                      <ShieldCheck className="w-4 h-4 text-teal-300" />
+                  <div className="space-y-5 relative z-10 max-w-lg">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200/80 shadow-2xs">
+                      <ShieldCheck className="w-4 h-4 text-[#0B7C8A]" />
                       PORTAL ADUAN WARGA &amp; AKUNTABILITAS PUBLIK
                     </div>
 
-                    <h2 className="text-3xl sm:text-5xl font-extrabold font-display leading-tight text-white">
+                    <h2 className="text-2xl sm:text-4xl font-extrabold font-display leading-tight text-slate-900">
                       Kawal Anggaran APBD.
                       <br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] via-teal-300 to-amber-300">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0FA3B1] to-teal-700">
                         Laporkan Faktual di Lapangan.
                       </span>
                     </h2>
 
-                    <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
                       Satu akun terpadu untuk warga Sumatera Utara, verifikator inspektorat, dan instansi dinas terkait. Kirim aduan fisik proyek publik secara transparan, aman, dan terpantau real-time.
                     </p>
 
-                    <div className="pt-2 space-y-3 text-xs sm:text-sm text-slate-300">
+                    <div className="pt-2 space-y-3 text-xs text-slate-700">
                       <div className="flex items-start gap-3">
-                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
+                        <span className="p-1.5 rounded-lg bg-teal-100/70 text-[#0B7C8A] font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-white block font-bold">Privasi Pelapor Faktual &amp; Enkripsi Data</strong>
-                          <span className="text-slate-400 text-xs">Identitas pelapor terenkripsi aman dan mendukung mode pelaporan anonim.</span>
+                          <strong className="text-slate-900 block font-bold">Privasi Pelapor Faktual &amp; Enkripsi Data</strong>
+                          <span className="text-slate-500 text-[11px]">Identitas pelapor terenkripsi aman dan mendukung mode pelaporan anonim.</span>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
+                        <span className="p-1.5 rounded-lg bg-teal-100/70 text-[#0B7C8A] font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-white block font-bold">Kompresi Foto Fisik &amp; Kode Tracking TRG-2026</strong>
-                          <span className="text-slate-400 text-xs">Foto dikompres otomatis di HP/browser dan diberi nomor resi pantau publik.</span>
+                          <strong className="text-slate-900 block font-bold">Kompresi Foto Fisik &amp; Kode Tracking TRG-2026</strong>
+                          <span className="text-slate-500 text-[11px]">Foto dikompres otomatis di HP/browser dan diberi nomor resi pantau publik.</span>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <span className="p-1.5 rounded-lg bg-[#0FA3B1]/20 text-teal-300 font-bold shrink-0">✓</span>
+                        <span className="p-1.5 rounded-lg bg-teal-100/70 text-[#0B7C8A] font-bold shrink-0">✓</span>
                         <div>
-                          <strong className="text-white block font-bold">Moderasi State Machine &amp; Respons Dinas</strong>
-                          <span className="text-slate-400 text-xs">Transisi status laporan diverifikasi secara akuntabel hingga tindak lanjut dinas.</span>
+                          <strong className="text-slate-900 block font-bold">Moderasi State Machine &amp; Respons Dinas</strong>
+                          <span className="text-slate-500 text-[11px]">Transisi status laporan diverifikasi secara akuntabel hingga tindak lanjut dinas.</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Summary Footer on Left Side */}
-                  <div className="pt-6 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
+                  <div className="pt-5 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-500 relative z-10">
                     <span>52 Laporan Faktual</span>
                     <span>•</span>
                     <span>156 Paket Proyek</span>
                     <span>•</span>
-                    <span className="text-teal-400 font-bold">33 Kab/Kota Sumut</span>
+                    <span className="text-[#0B7C8A] font-bold">33 Kab/Kota Sumut</span>
                   </div>
                 </div>
 
-                {/* RIGHT SIDE: SEAMLESS FORM INTEGRATION (42% Width) */}
-                <div className="lg:w-5/12 bg-[#F8FAFC] p-8 sm:p-12 flex flex-col justify-between text-left space-y-5">
-                  <div className="max-w-md mx-auto w-full my-auto space-y-4">
+                {/* SISI KANAN: FORM LOGIN & REGISTER LEBIH LEBAR (60% Lebar - lg:w-7/12) */}
+                <div className="lg:w-7/12 bg-white p-8 sm:p-12 lg:p-16 flex flex-col justify-between text-left space-y-5">
+                  <div className="max-w-xl mx-auto w-full my-auto space-y-5">
                     {/* Header Title inside Right Panel */}
                     <div className="space-y-1">
                       <span className="text-xs font-mono font-bold text-[#0FA3B1] uppercase tracking-wider block">
-                        {authTab === "login" ? "SESI MASUK AKUN" : "PENDAFTARAN WARGA PUBLIK"}
+                        {authTab === "login" ? "SESI MASUK AKUN REAL" : "PENDAFTARAN WARGA PUBLIK REAL"}
                       </span>
-                      <h3 className="text-2xl font-extrabold text-slate-900 font-display">
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-display">
                         {authTab === "login" ? "Masuk ke TERANG" : "Buat Akun Baru"}
                       </h3>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs sm:text-sm text-slate-500">
                         {authTab === "login"
-                          ? "Masukkan email dan kata sandi Anda untuk mengakses portal."
-                          : "Lengkapi formulir pendaftaran untuk menyampaikan aduan warga."}
+                          ? "Masukkan email dan kata sandi Anda untuk mengakses portal pengawasan."
+                          : "Lengkapi formulir pendaftaran untuk menyampaikan aduan warga secara terverifikasi."}
                       </p>
                     </div>
 
                     {/* Tab Switcher */}
-                    <div className="grid grid-cols-2 gap-1.5 bg-slate-200/80 p-1.5 rounded-xl text-xs font-bold">
+                    <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold">
                       <button
                         onClick={() => {
                           setAuthTab("login");
@@ -851,7 +851,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         }}
                         className={`py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                           authTab === "login"
-                            ? "bg-[#0B7C8A] text-white shadow-sm"
+                            ? "bg-[#0B7C8A] text-white shadow-sm font-extrabold"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
@@ -866,7 +866,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         }}
                         className={`py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                           authTab === "register"
-                            ? "bg-[#0B7C8A] text-white shadow-sm"
+                            ? "bg-[#0B7C8A] text-white shadow-sm font-extrabold"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
@@ -891,7 +891,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
                     {/* FORM MASUK AKUN (LOGIN) */}
                     {authTab === "login" && (
-                      <form onSubmit={(e) => handleSlideLogin(e)} className="space-y-3.5 text-xs">
+                      <form onSubmit={(e) => handleSlideLogin(e)} className="space-y-4 text-xs">
                         <div className="space-y-1">
                           <label className="font-bold text-slate-700 block">Alamat Email</label>
                           <div className="relative">
@@ -902,7 +902,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={loginEmail}
                               onChange={(e) => setLoginEmail(e.target.value)}
                               placeholder="nama@email.com"
-                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
                             />
                           </div>
                         </div>
@@ -917,7 +917,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={loginPassword}
                               onChange={(e) => setLoginPassword(e.target.value)}
                               placeholder="Masukkan kata sandi"
-                              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
+                              className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1] focus:ring-2 focus:ring-teal-100"
                             />
                           </div>
                         </div>
@@ -925,15 +925,15 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         <button
                           type="submit"
                           disabled={authLoading}
-                          className="w-full py-3 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
+                          className="w-full py-3.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
                         >
-                          {authLoading ? "Memproses..." : "Masuk Akun TERANG →"}
+                          {authLoading ? "Memproses Sesi..." : "Masuk Akun TERANG →"}
                         </button>
 
                         {/* Quick Fill Demo Shortcuts */}
                         <div className="pt-3 border-t border-slate-200 space-y-2">
                           <span className="text-[11px] font-bold text-slate-500 block">
-                            Atau Sekali Klik Masuk Otomatis:
+                            Atau Sekali Klik Masuk Otomatis Sesi Demo:
                           </span>
                           <div className="grid grid-cols-3 gap-2">
                             <button
@@ -981,7 +981,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
                     {/* FORM DAFTAR AKUN BARU (REGISTER) */}
                     {authTab === "register" && (
-                      <form onSubmit={handleSlideRegister} className="space-y-3 text-xs">
+                      <form onSubmit={handleSlideRegister} className="space-y-3.5 text-xs">
                         <div className="space-y-1">
                           <label className="font-bold text-slate-700 block text-[11px]">Nama Lengkap</label>
                           <div className="relative">
@@ -992,12 +992,12 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={regName}
                               onChange={(e) => setRegName(e.target.value)}
                               placeholder="Nama lengkap Anda"
-                              className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-2.5">
                           <div className="space-y-1">
                             <label className="font-bold text-slate-700 block text-[11px]">Email</label>
                             <input
@@ -1006,7 +1006,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={regEmail}
                               onChange={(e) => setRegEmail(e.target.value)}
                               placeholder="nama@email.com"
-                              className="w-full px-2.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
 
@@ -1019,18 +1019,18 @@ export const LandingView: React.FC<LandingViewProps> = ({
                               value={regPassword}
                               onChange={(e) => setRegPassword(e.target.value)}
                               placeholder="Min 4 char"
-                              className="w-full px-2.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             />
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-2.5">
                           <div className="space-y-1">
                             <label className="font-bold text-slate-700 block text-[11px]">Peran Pengguna</label>
                             <select
                               value={regRole}
                               onChange={(e) => setRegRole(e.target.value as any)}
-                              className="w-full px-2 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-2.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             >
                               <option value="warga">Pelapor Warga</option>
                               <option value="verifikator">Verifikator</option>
@@ -1043,7 +1043,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                             <select
                               value={regRegionId}
                               onChange={(e) => setRegRegionId(e.target.value)}
-                              className="w-full px-2 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
+                              className="w-full px-2.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-[11px] font-semibold focus:outline-none focus:border-[#0FA3B1]"
                             >
                               {REGIONS.map((reg) => (
                                 <option key={reg.id} value={reg.id}>
@@ -1057,7 +1057,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         <button
                           type="submit"
                           disabled={authLoading}
-                          className="w-full py-3 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
+                          className="w-full py-3.5 bg-[#0B7C8A] hover:bg-[#096A76] text-white font-bold rounded-xl text-xs shadow-md transition-all hover:scale-[1.01] active:scale-95 cursor-pointer disabled:opacity-50 mt-2"
                         >
                           {authLoading ? "Mendaftar..." : "Daftar & Masuk Akun →"}
                         </button>
