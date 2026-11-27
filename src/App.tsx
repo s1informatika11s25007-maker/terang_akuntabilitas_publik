@@ -85,21 +85,22 @@ export default function App() {
     transparencyScores: [],
   });
 
+  const getEffectiveUser = () => {
+    if (currentUser) return currentUser;
+    try {
+      const saved = localStorage.getItem('terang_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  };
+
   // Central Route Guard helper
-  const checkRouteAccess = (view: string, user: any): boolean => {
+  const checkRouteAccess = (view: string, userOverride?: any): boolean => {
+    const activeUser = userOverride || getEffectiveUser();
     const protectedViews = ['admin'];
-    if (protectedViews.includes(view) && !user) {
-      const defaultUser = {
-        email: 'admin@terang.test',
-        name: 'Administrator Utama TERANG',
-        role: 'super_admin',
-      };
-      const defaultToken = 'admin-token-default';
-      localStorage.setItem('terang_user', JSON.stringify(defaultUser));
-      localStorage.setItem('terang_token', defaultToken);
-      setAuthToken(defaultToken);
-      setCurrentUser(defaultUser);
-      return true;
+    if (protectedViews.includes(view) && !activeUser) {
+      return false;
     }
     return true;
   };
@@ -112,8 +113,8 @@ export default function App() {
     const handleHash = () => {
       const hash = window.location.hash.replace('#', '').trim();
       if (hash && ['landing', 'agent-automation', 'dashboard', 'proyek', 'lapor', 'lacak', 'laporan', 'insight', 'data', 'tentang', 'admin'].includes(hash)) {
-        if (!checkRouteAccess(hash, currentUser)) {
-          setIsAuthModalOpen(true);
+        const activeUser = getEffectiveUser();
+        if (!checkRouteAccess(hash, activeUser)) {
           setCurrentView('landing');
           window.location.hash = 'landing';
           return;
@@ -153,8 +154,9 @@ export default function App() {
   };
 
   const handleNavigate = (view: string) => {
-    if (!checkRouteAccess(view, currentUser)) {
-      setIsAuthModalOpen(true);
+    const activeUser = getEffectiveUser();
+    if (!checkRouteAccess(view, activeUser)) {
+      setCurrentView('landing');
       return;
     }
     setCurrentView(view);
